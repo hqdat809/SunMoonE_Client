@@ -103,7 +103,7 @@ const Layouts = ({ setAccessToken }: ILayoutsProps) => {
 
   useEffect(() => {
     const cartFromLocal = localStorage.getItem("productInCart");
-    setCart(JSON.parse(cartFromLocal || ""));
+    // setCart(JSON.parse(cartFromLocal || ""));
   }, []);
 
   const DrawerList = (
