@@ -6,7 +6,7 @@
     },
     {
       "source": "/token",
-      "destination": "https://id.kiotviet.vn/connect/token/:path*"
+      "destination": "https://id.kiotviet.vn/connect/token"
     }
   ]
 }
