@@ -5,7 +5,7 @@
       "destination": "https://public.kiotapi.com/:path*"
     },
     {
-      "source": "/token/:path*",
+      "source": "/token",
       "destination": "https://id.kiotviet.vn/connect/token/:path*"
     }
   ]
