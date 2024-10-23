@@ -1,0 +1,91 @@
+@use "../../../themes/variables" as *;
+@use "../../../themes/colors" as *;
+
+.wrapper {
+  background-color: #ffffff37;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  padding: 25px;
+  border-radius: 5px;
+}
+
+.register__form {
+  width: 100%;
+  margin: 0;
+
+  .login-title {
+    font-size: $font-size-large;
+  }
+
+  .login-error-field {
+    border-color: red;
+  }
+
+  .otp {
+    padding: 6px 12px;
+    font-size: $font-size-large;
+    height: 50px;
+    width: 40px !important;
+    border-radius: 6px;
+    border-color: black;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    div {
+      width: 100%;
+    }
+  }
+
+  .login-actions {
+    .btn-login {
+      width: 100%;
+    }
+  }
+
+  .login-error-text {
+    color: red;
+    margin-left: 6px;
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 16px;
+  }
+
+  .note {
+    text-align: center;
+    font-size: $font-size-medium;
+    margin-top: 20px;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+      color: $blue_12;
+    }
+  }
+
+  // .skip-action {
+  //   display: flex;
+  //   justify-content: flex-end;
+  //   margin-top: 20px;
+
+  //   .skip-button {
+  //     text-align: end;
+  //     font-size: $font-size-medium;
+
+  //     cursor: pointer;
+
+  //     &:hover {
+  //       text-decoration: underline;
+  //       color: $blue_12;
+  //     }
+  //   }
+  // }
+}
+
+.register__row {
+  display: flex;
+  gap: 6px;
+}

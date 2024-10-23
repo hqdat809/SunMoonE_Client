@@ -1,0 +1,15 @@
+@use "../../themes/colors" as *;
+
+.Timing {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+
+  &__action {
+    cursor: pointer;
+    text-decoration: underline;
+
+    color: $blue_12;
+  }
+}

@@ -1,0 +1,394 @@
+@use "../../../themes/colors" as *;
+@use "../../../themes/variables" as *;
+
+.Order {
+  &__userInfo {
+    display: flex;
+    background-color: $white;
+    margin: 100px 100px 20px 100px;
+    padding: 20px 20px;
+    border-radius: 6px;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  }
+
+  &__label {
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  &__location {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    border: 2px solid $neutrals_07;
+    border-radius: 10px;
+
+    &:hover {
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    }
+  }
+
+  &__action {
+    color: $primary-color;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    svg {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  &__title {
+    color: $primary-color;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid $primary-color;
+    display: flex;
+
+    &-text {
+      font-size: $font-size-medium;
+    }
+  }
+
+  &__userRecipient {
+    display: flex;
+    gap: 20px;
+
+    &-info {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      &-label {
+        min-width: 150px;
+      }
+
+      &-values {
+        color: $primary-color;
+      }
+
+      &-item {
+        display: flex;
+      }
+    }
+  }
+}
+
+.Form {
+  &__error-field {
+    border-color: red;
+
+    .MuiFormLabel-root,
+    .MuiFormHelperText-root,
+    .Mui-focus {
+      color: red !important;
+    }
+
+    .MuiInputBase-root,
+    fieldset,
+    .MuiInputBase-root {
+      border-color: red !important;
+    }
+  }
+
+  &__note {
+    color: $primary-color;
+    font-weight: bold;
+  }
+
+  &__buttons {
+    &-save {
+      display: flex;
+      justify-content: space-between;
+      display: flex;
+      align-items: center;
+    }
+
+    &-primary {
+      button {
+        background-color: $primary-color;
+      }
+    }
+  }
+
+  &__row {
+    display: flex;
+    gap: 20px;
+  }
+}
+
+.Order {
+  &__products {
+    display: flex;
+    background-color: $white;
+    margin: 0 100px 20px 100px;
+    padding: 20px 20px;
+    border-radius: 6px;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  }
+
+  &__listProduct {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__item {
+    display: flex;
+    border-bottom: 1px solid $neutrals_03;
+    padding-bottom: 12px;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+
+    &-image {
+      height: 75px;
+      width: 75px;
+      background-size: cover;
+
+      background-repeat: no-repeat;
+      background-position: center;
+      object-fit: cover;
+    }
+
+    &-name {
+      display: flex;
+      flex: 2;
+      justify-content: flex-start;
+    }
+
+    &-desc,
+    &-asc {
+      border: 1px solid $neutrals_03;
+      padding: 5px 15px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: $neutrals_01;
+      }
+    }
+
+    &-quantity {
+      display: flex;
+    }
+
+    &-number {
+      border-top: 1px solid $neutrals_03;
+      border-bottom: 1px solid $neutrals_03;
+      cursor: pointer;
+      padding: 2px 2px;
+
+      input:focus {
+        outline: none;
+      }
+
+      input {
+        border: none;
+        width: 50px;
+        size: $font-size-large;
+        text-align: center;
+      }
+    }
+
+    &-price {
+      display: flex;
+      flex: 1;
+      justify-content: center;
+    }
+
+    &-quantity {
+      display: flex;
+      flex: 1;
+      justify-content: center;
+    }
+
+    &-totalPrice {
+      display: flex;
+      flex: 1;
+      color: $primary-color;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    &-action {
+      cursor: pointer;
+      &:hover {
+        opacity: 0.8;
+      }
+      svg {
+        color: $primary-color;
+      }
+    }
+  }
+
+  &__total {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    align-items: center;
+    &-label {
+      font-size: $font-size-medium;
+      color: $neutrals_07;
+      margin-right: 30px;
+    }
+
+    &-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: $font-size-large;
+      color: $primary-color;
+
+      span {
+        font-size: $font-size-default;
+        color: $neutrals_07;
+      }
+    }
+
+    &-price {
+      font-size: $font-size-large;
+      color: $primary-color;
+    }
+  }
+}
+
+.Order {
+  &__delivery {
+    display: flex;
+    background-color: $white;
+    margin: 0 100px 20px 100px;
+    padding: 20px 20px;
+    border-radius: 6px;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  }
+
+  &__tabs {
+    .MuiTab-root.Mui-selected {
+      color: $primary-color !important;
+    }
+
+    .MuiTabs-indicator {
+      background-color: $primary-color !important;
+    }
+
+    &-banking {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+
+      &-info {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        flex: 1;
+      }
+
+      &-label {
+        min-width: 150px;
+
+        &.bold {
+          font-weight: bold;
+        }
+      }
+
+      &-value {
+        color: $primary-color;
+        font-weight: bold;
+      }
+
+      &-item {
+        display: flex;
+      }
+
+      &-qr {
+        flex: 1;
+        align-items: flex;
+        padding-left: 100px;
+
+        &-image {
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center;
+          object-fit: cover;
+          height: 250px;
+          width: 250px;
+          margin-right: 20px;
+          background-size: cover;
+        }
+      }
+    }
+  }
+}
+
+.Order {
+  &__bill {
+    display: flex;
+    background-color: $white;
+    margin: 0 100px 20px 100px;
+    padding: 20px 20px;
+    border-radius: 6px;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+
+    &-details {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    &-label {
+      min-width: 500px;
+    }
+
+    &-value {
+      color: $primary-color;
+
+      &.total {
+        font-size: $font-size-large;
+      }
+    }
+
+    &-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 30px;
+    }
+
+    &-back {
+      button {
+        border-color: $primary-color;
+        color: $primary-color;
+      }
+    }
+
+    &-submit {
+      button {
+        padding-left: 30px;
+        padding-right: 30px;
+        background-color: $primary-color;
+      }
+    }
+
+    &-item {
+      display: flex;
+      align-items: center;
+      min-height: 30px;
+    }
+  }
+}

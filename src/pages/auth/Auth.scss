@@ -1,0 +1,73 @@
+@use "../../themes/variables" as *;
+
+.login_page {
+  background-image: url("../../assets/Login_background.jpg");
+  background-color: rgb(89, 80, 82);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  object-fit: cover;
+}
+
+.container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login_card {
+  width: 400px;
+  height: 500px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  margin: auto;
+}
+
+.wrapper {
+  background-color: #ffffff37;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  padding: 25px;
+  border-radius: 5px;
+}
+
+.login-error-field {
+  border-color: red;
+}
+
+.login-title {
+  font-size: $font-size-large;
+}
+
+.form_login {
+  width: 100%;
+  margin: 0;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    div {
+      width: 100%;
+    }
+  }
+
+  .login-actions {
+    .btn-login {
+      width: 100%;
+    }
+  }
+
+  .login-error-text {
+    color: red;
+    margin-left: 6px;
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 16px;
+  }
+}

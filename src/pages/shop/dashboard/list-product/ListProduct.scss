@@ -1,0 +1,64 @@
+@use "../../../../themes/colors" as *;
+@use "../../../../themes/variables" as *;
+.ListProducts {
+  padding: 60px 100px;
+  background-color: $neutrals_01;
+
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &-more {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: $font-size-medium;
+
+    &:hover {
+      color: $primary-color;
+      text-decoration: underline;
+    }
+  }
+
+  &-title {
+    text-transform: uppercase;
+    font-size: $font-size-large;
+    font-weight: bold;
+    border-bottom: 2px solid $primary-color;
+    padding: 6px 0;
+  }
+
+  &-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 24px;
+  }
+
+  &-first {
+    flex: 4;
+    padding: 24px;
+    border-right: 1px solid $neutrals_03;
+
+    .ListProducts-products {
+      &-item {
+        height: 80%;
+      }
+
+      &-img {
+        height: 100%;
+      }
+
+      &-details {
+        width: 100%;
+        padding: 0 12px;
+      }
+    }
+  }
+
+  &-list {
+    flex: 7;
+  }
+}

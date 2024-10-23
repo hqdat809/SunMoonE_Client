@@ -1,0 +1,46 @@
+@use "../../../themes/variables" as *;
+
+.wrapper {
+  background-color: #ffffff37;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  padding: 25px;
+  border-radius: 5px;
+}
+
+.form_login {
+  width: 100%;
+  margin: 0;
+
+  .login-title {
+    font-size: $font-size-large;
+  }
+
+  .login-error-field {
+    border-color: red;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    div {
+      width: 100%;
+    }
+  }
+
+  .login-actions {
+    .btn-login {
+      width: 100%;
+    }
+  }
+
+  .login-error-text {
+    color: red;
+    margin-left: 6px;
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 16px;
+  }
+}

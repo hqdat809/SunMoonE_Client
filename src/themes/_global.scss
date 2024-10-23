@@ -1,0 +1,68 @@
+@use "./variables" as *;
+/* Global - Style */
+
+@font-face {
+  font-family: "Carlito";
+  src: url("../assets/fonts/Carlito-Bold.woff");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Carlito";
+  src: url("../assets/fonts/Carlito-Regular.woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+body {
+  font-size: $font-size-default;
+  font-family: sans-serif !important;
+  font-style: normal;
+  color: $font-color-default;
+  background-color: #fafafa;
+}
+
+.ant-typography {
+  font-size: medium;
+}
+
+/* H1 - Typography */
+h1 {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 64px;
+  color: $font-color-default;
+}
+
+/* H2 - Typography */
+h2 {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 56px;
+  color: $font-color-default;
+}
+
+/* H3 - Typography */
+h3 {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 44px;
+  color: $font-color-default;
+}
+
+.m-0 {
+  margin: 0 !important;
+}
+
+.align-item-start {
+  align-items: start !important;
+}
+
+.App {
+  height: 100%;
+}
+
+#root {
+  height: 100%;
+}
