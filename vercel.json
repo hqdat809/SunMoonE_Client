@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/v1/:path*",
+      "destination": "http://103.179.191.149:8080/:path*"
+    },
+    {
       "source": "/kiot/:path*",
       "destination": "https://public.kiotapi.com/:path*"
     },
