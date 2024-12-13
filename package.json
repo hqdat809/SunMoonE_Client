@@ -32,6 +32,7 @@
     "react-simple-star-rating": "^5.1.7",
     "sass": "^1.78.0",
     "swiper": "^11.1.14",
+    "universal-cookie": "^7.2.2",
     "yup": "^1.4.0"
   },
   "devDependencies": {

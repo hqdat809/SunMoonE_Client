@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./Navbar.scss";
 import logo from "../../assets/images/icon.jpg";
 import { useNavigate } from "react-router-dom";
@@ -7,7 +7,14 @@ import SearchButton from "../search-button/SearchButton";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { CartContext } from "../../pages/layouts/Layouts";
 import ShoppingCartTwoToneIcon from "@mui/icons-material/ShoppingCartTwoTone";
-import { Badge } from "@mui/material";
+import { Avatar, Badge, Divider, ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
+import { EAuthToken, TUserDetails } from "../../interfaces/user-interfaces";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { getTokenFromKiotViet } from "../../services/auth-service";
+import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
+import { getListOrder } from "../../services/order-service";
+
 const listRouteNavbar = [
   { label: "Trang chủ", path: RoutePath.DASHBOARD },
   { label: "Giới thiệu", path: "/gioi-thieu" },
@@ -18,7 +25,67 @@ const listRouteNavbar = [
 
 const Navbar = () => {
   const navigate = useNavigate();
+
   const { setOpen, cart } = useContext(CartContext);
+  const [orderNumber, setOrderNumber] = useState(0);
+
+  const [userDetails, setUserDetails] = useState<TUserDetails>();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    console.log(event)
+    setAnchorEl(event.currentTarget);
+  };
+
+
+  const handleNavigateLoginPage = () => {
+    navigate(RoutePath.AUTH);
+  };
+
+  const handleNavigateRegisterPage = () => {
+    navigate(RoutePath.AUTH, { state: "REGISTER" });
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem(EAuthToken.ACCESS_TOKEN)
+    localStorage.removeItem(EAuthToken.KIOT_TOKEN)
+    localStorage.removeItem(EAuthToken.REFRESH_TOKEN)
+    navigate(RoutePath.AUTH);
+    handleClose()
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleNavigateProfilePage = () => {
+    navigate(RoutePath.PROFILE);
+    handleClose()
+  };
+
+  const handleGetListOrder = async () => {
+    const userDetails = JSON.parse(localStorage.getItem("userDetails") || "") as TUserDetails
+
+    const orderRequest = {
+      orderBy: "createdDate",
+      orderDirection: "DESC",
+      pageSize: 20,
+      status: [1],
+      customerIds: [Number(userDetails.customerId)]
+    }
+    const res = await getListOrder(orderRequest)
+
+    if (res) setOrderNumber(res.data.length || 0)
+  }
+
+  useEffect(() => {
+    const details = localStorage.getItem("userDetails");
+    if (details && details != undefined) {
+      setUserDetails(JSON.parse(details || ""));
+    }
+
+    handleGetListOrder()
+  }, []);
 
   return (
     <div className="Navbar">
@@ -30,9 +97,8 @@ const Navbar = () => {
           {listRouteNavbar.map((route, index) => (
             <div
               key={index}
-              className={`Navbar__routes-item ${
-                route.path === window.location.pathname ? "active" : ""
-              }`}
+              className={`Navbar__routes-item ${route.path === window.location.pathname ? "active" : ""
+                }`}
               onClick={() => navigate(route.path)}
             >
               {route.label}
@@ -44,6 +110,15 @@ const Navbar = () => {
         <div className="Navbar__search">
           <SearchButton />
         </div>
+        <div className="Navbar__cart" onClick={() => navigate(RoutePath.ORDER_LIST)}>
+          <Badge
+            badgeContent={orderNumber}
+            color="primary"
+            className="Navbar__cart-badge"
+          >
+            <LocalShippingOutlinedIcon className="Navbar__cart-icon" />
+          </Badge>
+        </div>
         <div className="Navbar__cart" onClick={() => setOpen(true)}>
           <Badge
             badgeContent={cart.length}
@@ -53,10 +128,60 @@ const Navbar = () => {
             <ShoppingCartTwoToneIcon className="Navbar__cart-icon" />
           </Badge>
         </div>
-        <div className="Navbar__auth">
-          <div className="Navbar__auth-login">Đăng nhập</div>
-          <div className="Navbar__auth-register">Đăng kí</div>
+        {/* <div className="Navbar__auth">
+          <div className="Navbar__auth-login" onClick={handleNavigateLoginPage}>
+            Đăng nhập
+          </div>
+          <div
+            className="Navbar__auth-register"
+            onClick={handleNavigateRegisterPage}
+          >
+            Đăng kí
+          </div>
+        </div> */}
+
+
+        {/* <div className="Navbar__profile">
+          <div className="Navbar__profile-avatar">
+            <Avatar alt="logo" sx={{ width: 30, height: 30 }} />
+          </div>
+          <div className="Navbar__profile-name">Admin</div>
+        </div> */}
+        <div className="Navbar__profile" id="basic-button"
+          aria-controls={open ? 'basic-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? 'true' : undefined}
+          onClick={handleClick}>
+          <div className="Navbar__auth-name">
+            {`${userDetails?.firstName} ${userDetails?.lastName}`}
+          </div>
+          <div className="Navbar__profile-avatar">
+            <Avatar alt="logo" sx={{ width: 30, height: 30 }} />
+          </div>
         </div>
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          MenuListProps={{
+            'aria-labelledby': 'basic-button',
+          }}
+        >
+          <MenuItem onClick={handleNavigateProfilePage}>
+            <ListItemIcon>
+              <AccountCircleIcon fontSize="medium" />
+            </ListItemIcon>
+            <ListItemText>Profile</ListItemText>
+          </MenuItem>
+          <Divider />
+          <MenuItem onClick={handleLogout}>
+            <ListItemIcon>
+              <LogoutIcon fontSize="medium" />
+            </ListItemIcon>
+            <ListItemText >Logout</ListItemText>
+          </MenuItem>
+        </Menu>
       </div>
     </div>
   );

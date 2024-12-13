@@ -26,11 +26,9 @@ const LoginForm = ({ setHasAccount, setAccessToken }: ILoginFormProps) => {
 
   const handleNavigateHome = () => {
     navigate("/", { replace: true });
-    authService.getTokenFromKiotViet();
   };
 
   const handleSubmit = (values: TSignInRequest) => {
-    console.log(values);
     authService.signIn(values, handleNavigateHome).then((data) => {
       if (data) {
         setAccessToken(data.token);
@@ -60,11 +58,10 @@ const LoginForm = ({ setHasAccount, setAccessToken }: ILoginFormProps) => {
                 type="email"
                 name="email"
                 id="form3Example3"
-                className={`form-control form-control-lg  ${
-                  formikProps.errors.email &&
+                className={`form-control form-control-lg  ${formikProps.errors.email &&
                   formikProps.touched.email &&
                   "login-error-field"
-                }`}
+                  }`}
                 placeholder="Enter a valid email address"
               />
               <ErrorMessage
@@ -79,11 +76,10 @@ const LoginForm = ({ setHasAccount, setAccessToken }: ILoginFormProps) => {
                 type="password"
                 name="password"
                 id="form3Example4"
-                className={`form-control form-control-lg  ${
-                  formikProps.errors.password &&
+                className={`form-control form-control-lg  ${formikProps.errors.password &&
                   formikProps.touched.password &&
                   "login-error-field"
-                }`}
+                  }`}
                 placeholder="Enter password"
               />
               <ErrorMessage

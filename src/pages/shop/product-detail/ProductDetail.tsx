@@ -16,7 +16,7 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import ProductCard from "../dashboard/product-card/ProductCard";
 import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
-import { PRODUCTS } from "../../../routes/paths";
+import * as RoutePath from "../../../routes/paths";
 import { CartContext } from "../../layouts/Layouts";
 
 interface IProps {
@@ -52,6 +52,13 @@ const ProductDetail = () => {
     }
   };
 
+
+  const handleBuyNow = () => {
+    handleAddToCart()
+    navigate(RoutePath.ORDER);
+    setOpen(false);
+  }
+
   const handleAddToCart = () => {
     setOpen(true);
     if (!cart.length && details) {
@@ -68,7 +75,6 @@ const ProductDetail = () => {
       } else if (details) {
         productAsJSON.push({ details, count });
       }
-      console.log("productAsJSON: ", productAsJSON);
       setCart(productAsJSON);
     }
   };
@@ -88,6 +94,22 @@ const ProductDetail = () => {
 
   const handleReloadPage = () => {
     window.location.reload();
+  };
+
+  const handleGetOldPrice = (p: IProductResponse) => {
+    const listOldProduct = JSON.parse(
+      localStorage.getItem("products") || ""
+    ) as IProductResponse[];
+
+    if (Array.isArray(listOldProduct)) {
+      const oldProduct: IProductResponse | undefined = listOldProduct?.find(
+        (item: IProductResponse) => p.code.includes(item.code.substring(3))
+      );
+      if (oldProduct) {
+        return oldProduct.basePrice.toLocaleString("vi-VN");
+      }
+    }
+    return p.basePrice.toLocaleString("vi-VN");
   };
 
   useEffect(() => {
@@ -123,7 +145,13 @@ const ProductDetail = () => {
               {details?.categoryName}
             </div>
           </div>
+
           <div className="ProductDetail__details-price">
+            {details && handleGetOldPrice(details) && (
+              <div className="ProductDetail__details-oldPrice">
+                {handleGetOldPrice(details)}đ
+              </div>
+            )}
             {details?.basePrice.toLocaleString("vi-VN")}đ
           </div>
 
@@ -185,7 +213,7 @@ const ProductDetail = () => {
                 <span>Thêm vào giỏ hàng</span>
               </Button>
             </div>
-            <div className="ProductDetail__buy">
+            <div className="ProductDetail__buy" onClick={handleBuyNow}>
               <Button variant="contained">Mua ngay</Button>
             </div>
           </div>

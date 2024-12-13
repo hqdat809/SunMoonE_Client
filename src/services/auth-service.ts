@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { FormikHelpers } from "formik";
 import {
+  EUserTypeCategory,
   TRegisterRequest,
   TSignInRequest,
   TSignInResponse,
@@ -8,24 +9,83 @@ import {
 import { toastError, toastSuccess } from "../utils/notifications-utils";
 import { saveStorageToken } from "../utils/storage-utils";
 import { ApiClient } from "./api-clients";
+import { getProducts } from "./product-service";
+import { createCustomer } from "./customer-service";
+// import Cookies from "universal-cookie";
+
+
 
 export const signIn = async (payload: TSignInRequest, cb?: () => void) => {
   try {
-    console.log("signIn", payload);
-
-    const response: AxiosResponse<TSignInResponse> = await ApiClient.post(
+    const response: AxiosResponse<TSignInResponse> = await axios.post(
       `/api/v1/auth/authenticate`,
       payload
     );
 
     if (response.status === 200) {
       saveStorageToken(response.data.token);
-      cb?.();
+      localStorage.setItem(
+        "userDetails",
+        JSON.stringify(response.data.userDetails)
+      );
+      switch (response.data.userDetails.authorities[0].authority) {
+        case EUserTypeCategory.USER:
+        case EUserTypeCategory.ADMIN: {
+          localStorage.setItem(
+            "CategoryParentId",
+            JSON.stringify(import.meta.env.VITE_COLLECTION_USER_ID)
+          );
+          break;
+        }
+        case EUserTypeCategory.CUSTOMER: {
+          localStorage.setItem(
+            "CategoryParentId",
+            JSON.stringify(import.meta.env.VITE_COLLECTION_CUSTOMER_ID)
+          );
+          break;
+        }
+        case EUserTypeCategory.CTV1: {
+          localStorage.setItem(
+            "CategoryParentId",
+            JSON.stringify(import.meta.env.VITE_COLLECTION_CTV1_ID)
+          );
+          break;
+        }
+        case EUserTypeCategory.CTV2: {
+          localStorage.setItem(
+            "CategoryParentId",
+            JSON.stringify(import.meta.env.VITE_COLLECTION_CTV2_ID)
+          );
+          break;
+        }
+        case EUserTypeCategory.CTV3: {
+          localStorage.setItem(
+            "CategoryParentId",
+            JSON.stringify(import.meta.env.VITE_COLLECTION_CTV3_ID)
+          );
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+      await cb?.();
+      await getTokenFromKiotViet()
+      await getProducts({
+        pageSize: 200,
+        orderBy: "name",
+        orderDirection: "ASC",
+        categoryId: import.meta.env.VITE_COLLECTION_USER_ID,
+        currentItem: 0,
+      }).then((res) => {
+        localStorage.setItem("products", JSON.stringify(res?.data))
+      }
+      );
+      localStorage.removeItem("productInCart");
     }
 
     return response.data;
   } catch (error: any) {
-    console.log(error);
     if (error.status === 401) {
       toastError("Email hoặc mật khẩu không đúng!!");
     } else {
@@ -40,7 +100,22 @@ export const register = async (
   cbe?: FormikHelpers<any>
 ) => {
   try {
-    const registerValues = { ...payload, role: "USER" };
+
+    const customerData = {
+      name: payload.firstName + payload.lastName,
+      email: payload.email,
+      phone: payload.phone,
+      branchId: 1000000900
+    }
+
+    const createdCustomerResponse = await createCustomer(customerData)
+
+    if (!createdCustomerResponse) {
+      throw new Error("Customer not created")
+    }
+
+    const registerValues = { ...payload, role: "USER", customerId: createdCustomerResponse.data.id };
+
 
     const response: AxiosResponse<TSignInResponse> = await ApiClient.post(
       `/api/v1/auth/register`,
@@ -87,6 +162,18 @@ export const sendOTP = async (payload: string, cb?: () => void) => {
   }
 };
 
+export const checkSession = async (cb?: () => void) => {
+  try {
+    const response: AxiosResponse<TSignInResponse> = await ApiClient.get(
+      `/api/v1/session`
+    );
+    return response.data;
+  } catch (error: any) {
+    toastError(error.message);
+  }
+};
+
+
 export const verifyEmail = async (
   payload: { email: string; otp: string },
   cb?: () => void
@@ -124,7 +211,7 @@ export const getTokenFromKiotViet = async () => {
   } catch (error: any) {
     toastError(
       error.message ||
-        "Lấy token của KiotViet không thành công! Hãy thử đăng nhập lại hoặc liên hệ với admin"
+      "Lấy token của KiotViet không thành công! Hãy thử đăng nhập lại hoặc liên hệ với admin"
     );
   }
 };

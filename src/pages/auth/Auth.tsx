@@ -1,14 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LoginForm from "./login/LoginForm";
 import "./Auth.scss";
 import RegisterForm from "./register/Register";
+import { useLocation } from "react-router-dom";
 
 interface IAuthProps {
   setAccessToken: (token: string) => void;
 }
 
 const Auth = ({ setAccessToken }: IAuthProps) => {
-  const [hasAccount, setHasAccount] = useState(true);
+  const location = useLocation();
+  const status = location.state;
+
+  const [hasAccount, setHasAccount] = useState(
+    status === "REGISTER" ? false : true
+  );
 
   return (
     <div className="login_page">

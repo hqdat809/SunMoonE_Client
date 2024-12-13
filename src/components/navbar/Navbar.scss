@@ -22,8 +22,30 @@
     align-items: center;
   }
 
+  &__profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    &:hover {
+      background-color: $red_03;
+    }
+  }
+
   &__auth {
     display: flex;
+    gap: 8px;
+    padding-left: 20px;
+    margin-left: 10px;
+    border-left: 1px solid $neutrals_03;
+
+    &-name {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
     &-login,
     &-register {

@@ -54,6 +54,12 @@
       }
     }
 
+    &-oldPrice {
+      text-decoration: line-through;
+      font-size: $font-size-medium;
+      margin-bottom: 10px;
+    }
+
     &-more {
       color: $primary-color;
       cursor: pointer;

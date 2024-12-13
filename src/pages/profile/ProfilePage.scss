@@ -1,0 +1,46 @@
+@use "../../themes/variables" as *;
+@use "../../themes/colors" as *;
+.Edit {
+  &__shop {
+    &-header {
+      padding-bottom: 12px;
+      border-bottom: 1px solid $neutrals_03;
+    }
+
+    &-title {
+      font-size: $font-size-medium;
+    }
+    &-form {
+      padding: 12px 0;
+      border-bottom: 1px solid $neutrals_03;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      justify-content: space-between;
+    }
+
+    &-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    &-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      &-label {
+        font-weight: bold;
+      }
+      &-input {
+        input {
+          width: 100%;
+          padding: 10px 8px;
+          border-radius: 8px;
+          border: 1px solid $neutrals_03;
+          color: $neutrals_07;
+        }
+      }
+    }
+  }
+}

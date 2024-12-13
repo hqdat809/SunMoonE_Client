@@ -29,12 +29,12 @@
   }
 
   &__list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    display: grid; /* Sử dụng Grid */
+    grid-template-columns: repeat(3, 1fr); /* 3 cột với chiều rộng bằng nhau */
+    gap: 20px; /* Khoảng cách giữa các sản phẩm */
 
     &-item {
-      flex-basis: 23%;
+     
     }
   }
 

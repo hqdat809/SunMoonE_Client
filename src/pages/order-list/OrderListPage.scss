@@ -1,0 +1,15 @@
+
+@use "../../themes/variables" as *;
+@use "../../themes/colors" as *;
+
+.OrderListPage {
+    display: flex;
+    min-height: 100vh;
+    background-color: $white;
+    margin: 100px 100px 20px 100px;
+    padding: 20px 20px;
+    border-radius: 6px;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}

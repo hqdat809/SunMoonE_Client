@@ -14,3 +14,6 @@ export const PRODUCTS = "/products";
 export const PRODUCTS_CREATE = "create";
 
 export const COLLECTIONS = "/collections";
+
+export const PROFILE = "/profile";
+export const ORDER_LIST = "/order-list";

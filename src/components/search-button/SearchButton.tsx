@@ -25,7 +25,7 @@ const SearchButton = ({ onSearch }: ISearchButtonProps) => {
           <svg className="cloud">
             <use xlinkHref="#cloud" />
           </svg>
-          <svg className="lens" onClick={() => console.log("search")}>
+          <svg className="lens" >
             <use xlinkHref="#lens" />
           </svg>
         </div>

@@ -10,6 +10,7 @@ import { getProducts } from "../../../services/product-service";
 import ProductCard from "../dashboard/product-card/ProductCard";
 import "./Product.scss";
 import { useLocation, useParams } from "react-router-dom";
+import { EUserTypeCategory } from "../../../interfaces/user-interfaces";
 
 const priceSelections = [
   { label: "Mặc định", value: "default" },
@@ -17,15 +18,17 @@ const priceSelections = [
   { label: "Giá từ thấp đến cao", value: "ASC" },
 ];
 
-const initFilterProduct = {
-  pageSize: 20,
-  orderBy: "name",
-  orderDirection: "ASC",
-  categoryId: 1738133,
-  currentItem: 0,
-};
-
 const Product = () => {
+  const initFilterProduct = {
+    pageSize: 20,
+    orderBy: "name",
+    orderDirection: "ASC",
+    categoryId:
+      Number(JSON.parse(localStorage.getItem("CategoryParentId") || "")) ||
+      import.meta.env.VITE_COLLECTION_USER_ID,
+    currentItem: 0,
+  };
+
   const location = useLocation();
   const categoryId = location.state;
 
@@ -46,9 +49,15 @@ const Product = () => {
   const [selectedCollectionId, setSelectedCollectionId] = useState<number>();
 
   const handleGetCollections = () => {
-    getDetailCollection(1738133).then((response) => {
+    getDetailCollection(
+      Number(JSON.parse(localStorage.getItem("CategoryParentId") || "")) ||
+        import.meta.env.VITE_COLLECTION_USER_ID
+    ).then((response) => {
       if (response) {
-        setCollections(response.children?.reverse());
+        const newCollectiosn = response.children
+          ?.reverse()
+          .filter((cate) => !cate.categoryName.includes("{DEL}"));
+        setCollections(newCollectiosn);
       }
     });
   };
@@ -83,10 +92,22 @@ const Product = () => {
         <div className="Product__collections-title">Danh mục</div>
         <div
           className={`Product__collections-item ${
-            filter.categoryId === 1738133 ? "active" : ""
+            filter.categoryId ===
+              Number(
+                JSON.parse(localStorage.getItem("CategoryParentId") || "")
+              ) || import.meta.env.VITE_COLLECTION_USER_ID
+              ? "active"
+              : ""
           }`}
           onClick={() =>
-            setFilter({ ...filter, categoryId: 1738133, currentItem: 0 })
+            setFilter({
+              ...filter,
+              categoryId:
+                Number(
+                  JSON.parse(localStorage.getItem("CategoryParentId") || "")
+                ) || import.meta.env.VITE_COLLECTION_USER_ID,
+              currentItem: 0,
+            })
           }
         >
           Tất cả

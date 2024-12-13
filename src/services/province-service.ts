@@ -4,7 +4,7 @@ import { toastError } from "../utils/notifications-utils";
 export const getProvinces = async (cb?: () => void) => {
   try {
     const response: AxiosResponse<any> = await axios.get(
-      `https://vn-public-apis.fpo.vn/provinces/getAll?limit=-1`
+      `https://provinces.open-api.vn/api/?depth=3`
     );
     if (response.status === 200) {
       cb?.();

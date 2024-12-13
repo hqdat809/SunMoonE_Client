@@ -4,7 +4,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { LoadingButton } from "@mui/lab";
 import * as Yup from "yup";
-import { Button, Divider, MenuItem, Select, TextField } from "@mui/material";
+import { Button, Divider, FormLabel, Input, MenuItem, Select, TextField } from "@mui/material";
 import * as provinceService from "../../../services/province-service";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -20,8 +20,17 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import QRCode from "../../../assets/images/QRCode.png";
 import DescriptionIcon from "@mui/icons-material/Description";
+import { createOrder } from "../../../services/order-service";
+import { verifyEmail } from "../../../services/auth-service";
+import { toastError, toastSuccess } from "../../../utils/notifications-utils";
+import HandshakeIcon from '@mui/icons-material/Handshake';
+import { PAYMENT_TYPE } from "../../../enum/OrderEnum";
+import { useNavigate } from "react-router-dom";
+import * as RoutePath from "../../../routes/paths";
+
 const Order = () => {
   const { cart, setCart } = useContext(CartContext);
+  const navigate = useNavigate();
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("Tên không được bỏ trống"),
@@ -48,65 +57,20 @@ const Order = () => {
   const [listProvince, setListProvince] = useState<any[]>([]);
   const [listDistrict, setListDistrict] = useState<any[]>([]);
   const [listWard, setListWard] = useState<any[]>([]);
+  const [collector, setCollector] = useState<any>();
 
-  const [value, setValue] = React.useState("1");
 
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    setValue(newValue);
+  const [payment, setPayment] = React.useState(PAYMENT_TYPE.COD);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: PAYMENT_TYPE) => {
+    setPayment(newValue);
   };
 
   const handleGetProvices = () => {
     provinceService.getProvinces().then((res) => {
-      setListProvince(res.data.data);
+      setListProvince(res);
     });
   };
-
-  useEffect(() => {
-    console.log(provinceCode);
-  }, [provinceCode]);
-
-  const handlerGetDistricts = useCallback(() => {
-    if (provinceCode) {
-      try {
-        provinceService
-          .getDistricts(provinceCode, () => {
-            setListDistrict([]);
-            setProvinceCode(undefined);
-          })
-          .then((res) => {
-            setListDistrict(res.data.data);
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }, [provinceCode]);
-
-  const handlerGetWards = useCallback(() => {
-    if (districtCode) {
-      try {
-        provinceService
-          .getWards(districtCode, () => {
-            setListWard([]);
-            setDistrictCode(undefined);
-          })
-          .then((res) => {
-            setListWard(res.data.data);
-            console.log(res.data);
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }, [districtCode]);
-
-  useEffect(() => {
-    handlerGetDistricts();
-  }, [handlerGetDistricts]);
-
-  useEffect(() => {
-    handlerGetWards();
-  }, [handlerGetWards]);
 
   useEffect(() => {
     handleGetProvices();
@@ -174,6 +138,75 @@ const Order = () => {
     }
   };
 
+
+  const handleCreateOrder = async () => {
+    const orderDetails = cart.map(product => {
+      return {
+        productId: product.details.id,
+        quantity: product.count,
+        productName: product.details.name,
+        price: product.details.basePrice,
+        discount: 0,
+        discountRatio: 0,
+        viewDiscount: 0.0000
+      }
+    })
+
+    if (!addressRecipient) {
+      toastError("Vui lòng lưu thông tin liên lạc")
+      return
+    }
+
+    let description = '';
+
+    switch (payment) {
+      case (PAYMENT_TYPE.COD):
+        description = "COD"
+        break;
+      case (PAYMENT_TYPE.BANKING):
+        description = "BANKING"
+        break;
+      case (PAYMENT_TYPE.COLLECTOR):
+        description = "Thu hộ " + collector + "đ"
+        break;
+    }
+
+    if (payment === PAYMENT_TYPE.COD) {
+      description = "COD"
+    }
+
+    const userDetails = JSON.parse(localStorage.getItem("userDetails") || "")
+
+
+    const address = `${addressRecipient.address}, ${addressRecipient.ward}, ${addressRecipient.district}, ${addressRecipient.province}`;
+    const customerDetails = {
+      id: userDetails.customerId,
+    }
+
+    const orderDelivery = {
+      receiver: addressRecipient.name,
+      address: address,
+      contactNumber: addressRecipient.phoneNumber,
+      wardName: addressRecipient.ward,
+      price: parseInt(handleGetTotalPriceInCart())
+    }
+
+    const newOrder = {
+      description: description,
+      saleChannelId: 1000003992,
+      branchId: 286368,
+      orderDetails,
+      orderDelivery,
+      customer: customerDetails
+    }
+
+    await createOrder(newOrder)
+
+    toastSuccess("Đã tạo đơn hàng thành công", "Thành công")
+    navigate(RoutePath.ORDER_LIST);
+    setCart([])
+  }
+
   return (
     <div className="Order">
       <div className="Order__userInfo">
@@ -216,9 +249,8 @@ const Order = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         size="small"
-                        className={`form-control form-control-lg  ${
-                          errors.name && touched.name && "Form__error-field"
-                        }`}
+                        className={`form-control form-control-lg  ${errors.name && touched.name && "Form__error-field"
+                          }`}
                         helperText={touched.name && errors.name}
                       />
                       <Field
@@ -231,11 +263,10 @@ const Order = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         size="small"
-                        className={`form-control form-control-lg  ${
-                          errors.phoneNumber &&
+                        className={`form-control form-control-lg  ${errors.phoneNumber &&
                           touched.phoneNumber &&
                           "Form__error-field"
-                        }`}
+                          }`}
                         helperText={touched.phoneNumber && errors.phoneNumber}
                       />
                     </div>
@@ -252,16 +283,16 @@ const Order = () => {
                           setFieldValue("district", "");
                           setFieldValue("ward", "");
                           setDistrictCode(undefined);
-                          setProvinceCode(parseInt(e.target.value));
+                          setProvinceCode(e.target.value)
+                          setListDistrict(listProvince.find(d => d.code === e.target.value).districts)
                         }}
                         onBlur={handleBlur}
                         size="small"
                         select
-                        className={`form-control form-control-lg  ${
-                          errors.province &&
+                        className={`form-control form-control-lg  ${errors.province &&
                           touched.province &&
                           "Form__error-field"
-                        }`}
+                          }`}
                         helperText={touched.province && errors.province}
                       >
                         {listProvince?.map((province) => (
@@ -279,18 +310,18 @@ const Order = () => {
                         label="Quận / Huyện (*)"
                         value={districtCode}
                         onChange={(e: React.ChangeEvent<any>) => {
-                          handleChange(e);
+                          handleChange(e)
                           setFieldValue("ward", "");
-                          setDistrictCode(parseInt(e.target.value));
+                          setDistrictCode(e.target.value);
+                          setListWard(listDistrict.find(d => d.code === e.target.value).wards);
                         }}
                         onBlur={handleBlur}
-                        disabled={!values.province}
+                        disabled={!provinceCode}
                         size="small"
-                        className={`form-control form-control-lg  ${
-                          errors.district &&
+                        className={`form-control form-control-lg  ${errors.district &&
                           touched.district &&
                           "Form__error-field"
-                        }`}
+                          }`}
                         helperText={touched.district && errors.district}
                       >
                         {listDistrict?.map((province) => (
@@ -311,14 +342,13 @@ const Order = () => {
                         value={values.ward}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        disabled={!values.district}
+                        disabled={!districtCode}
                         size="small"
-                        className={`form-control form-control-lg  ${
-                          errors.ward &&
+                        className={`form-control form-control-lg  ${errors.ward &&
                           touched.ward &&
                           values.district &&
                           "Form__error-field"
-                        }`}
+                          }`}
                         helperText={
                           values.district && touched.ward && errors.ward
                         }
@@ -339,11 +369,10 @@ const Order = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         size="small"
-                        className={`form-control form-control-lg  ${
-                          errors.address &&
+                        className={`form-control form-control-lg  ${errors.address &&
                           touched.address &&
                           "Form__error-field"
-                        }`}
+                          }`}
                         helperText={touched.address && errors.address}
                       />
                     </div>
@@ -440,7 +469,7 @@ const Order = () => {
               <div
                 className="Order__item-image"
                 style={{
-                  backgroundImage: `url(${cartItem.details?.images[0]})`,
+                  backgroundImage: `url(${cartItem.details?.images?.[0]})`,
                 }}
               ></div>
               <div className="Order__item-name">{cartItem.details?.name}</div>
@@ -510,7 +539,7 @@ const Order = () => {
         </div>
         <div className="Order__tabs">
           <Box sx={{ width: "100%", typography: "body1" }}>
-            <TabContext value={value}>
+            <TabContext value={payment}>
               <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                 <TabList
                   onChange={handleChange}
@@ -520,22 +549,28 @@ const Order = () => {
                 >
                   <Tab
                     label="COD"
-                    value="1"
+                    value={PAYMENT_TYPE.COD}
                     icon={<PaidIcon />}
                     iconPosition="start"
                   />
                   <Tab
                     label="Chuyển khoản"
-                    value="2"
+                    value={PAYMENT_TYPE.BANKING}
                     icon={<AccountBalanceIcon />}
+                    iconPosition="start"
+                  />
+                  <Tab
+                    label="Thu Hộ"
+                    value={PAYMENT_TYPE.COLLECTOR}
+                    icon={<HandshakeIcon />}
                     iconPosition="start"
                   />
                 </TabList>
               </Box>
-              <TabPanel value="1">
+              <TabPanel value={PAYMENT_TYPE.COD}>
                 <div>Lưu ý: Khách hàng nhận hàng mới thanh toán</div>
               </TabPanel>
-              <TabPanel value="2">
+              <TabPanel value={PAYMENT_TYPE.BANKING}>
                 <div className="Order__tabs-banking">
                   <div className="Order__tabs-banking-info">
                     <div className="Order__tabs-banking-name Order__tabs-banking-item">
@@ -587,6 +622,14 @@ const Order = () => {
                   </div>
                 </div>
               </TabPanel>
+              <TabPanel value={PAYMENT_TYPE.COLLECTOR}>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                  <FormLabel >Nhập mức tiền thu hộ (vnđ)</FormLabel>
+                  <Input value={collector} placeholder="VND" onChange={(e) => {
+                    setCollector(Number(e.target.value.replace(/\D/g, "")).toLocaleString('vi-VN'))
+                  }} />
+                </div>
+              </TabPanel>
             </TabContext>
           </Box>
         </div>
@@ -615,7 +658,6 @@ const Order = () => {
             <div className="Order__bill-label">Phí vận chuyển: </div>
             <div className="Order__bill-value">Chưa tính</div>
           </div>
-          <Divider />
           <div className="Order__bill-item">
             <div className="Order__bill-label">Tổng thanh toán: </div>
             <div className="Order__bill-value total">
@@ -627,7 +669,7 @@ const Order = () => {
             <div className="Order__bill-back">
               <Button variant="outlined">Trở lại</Button>
             </div>
-            <div className="Order__bill-submit">
+            <div className="Order__bill-submit" onClick={handleCreateOrder}>
               <Button variant="contained">Đặt hàng</Button>
             </div>
           </div>

@@ -1,24 +1,22 @@
 import { Outlet, useNavigate } from "react-router-dom";
 
+import DeleteIcon from "@mui/icons-material/Delete";
 import FacebookRoundedIcon from "@mui/icons-material/FacebookRounded";
 import YouTubeIcon from "@mui/icons-material/YouTube";
+import { Button, Divider, Tooltip } from "@mui/material";
+import Box from "@mui/material/Box";
+import List from "@mui/material/List";
 import { Drawer } from "antd";
 import { createContext, useCallback, useEffect, useState } from "react";
-import Navbar from "../../components/navbar/Navbar";
-import { getStorageToken } from "../../utils/storage-utils";
-import "./Layouts.scss";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
-import { Button, Divider, Tooltip } from "@mui/material";
-import Box from "@mui/material/Box";
-import List from "@mui/material/List";
+import Navbar from "../../components/navbar/Navbar";
 import { IProductResponse } from "../../interfaces/product-interface";
-import { Swiper, SwiperSlide } from "swiper/react";
 import * as RoutePath from "../../routes/paths";
+import { getStorageToken } from "../../utils/storage-utils";
+import "./Layouts.scss";
 
 interface ILayoutsProps {
   setAccessToken: (token: string) => void;
@@ -33,9 +31,9 @@ interface IContext {
 
 export const CartContext = createContext({
   open: false,
-  setOpen: (value: boolean) => {},
+  setOpen: (value: boolean) => { },
   cart: [] as ICart[],
-  setCart: (cart: ICart[]) => {},
+  setCart: (cart: ICart[]) => { },
 });
 
 interface ICart {
@@ -52,6 +50,8 @@ const Layouts = ({ setAccessToken }: ILayoutsProps) => {
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
+
+
 
   const handleDeleteItem = (index: number) => {
     const newListCart = [...cart];
@@ -88,8 +88,6 @@ const Layouts = ({ setAccessToken }: ILayoutsProps) => {
 
   useEffect(() => {
     if (open) {
-      console.log("cart: ", cart);
-      console.log("open: ", open);
       localStorage.setItem("productInCart", JSON.stringify(cart));
     }
   }, [cart, open]);
@@ -103,19 +101,24 @@ const Layouts = ({ setAccessToken }: ILayoutsProps) => {
 
   useEffect(() => {
     const cartFromLocal = localStorage.getItem("productInCart");
-    // setCart(JSON.parse(cartFromLocal || ""));
+    if (cartFromLocal) {
+      setCart(JSON.parse(cartFromLocal));
+    }
   }, []);
+
+
+
 
   const DrawerList = (
     <Box role="presentation" className="Cart">
       <List className="Cart__listItem">
         {cart.map((product, index) => (
-          <>
+          <div key={index}>
             <div key={index} className="Cart__item">
               <div
                 className="Cart__item-img"
                 style={{
-                  backgroundImage: `url(${product.details.images[0]})`,
+                  backgroundImage: `url(${product.details.images?.[0]})`,
                 }}
               />
               <div className="Cart__item-info">
@@ -161,7 +164,7 @@ const Layouts = ({ setAccessToken }: ILayoutsProps) => {
               </div>
             </div>
             <Divider />
-          </>
+          </div>
         ))}
         {/* </Swiper> */}
       </List>

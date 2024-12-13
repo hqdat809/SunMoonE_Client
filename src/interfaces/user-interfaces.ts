@@ -20,7 +20,41 @@ export type TRegisterRequest = {
 
 export type TSignInResponse = {
   token: string;
+  userDetails: TUserDetails;
 };
+
+export interface TUserDetails {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  verifyCode: number;
+  role: string;
+  enabled: boolean;
+  accountNonExpired: boolean;
+  credentialsNonExpired: boolean;
+  username: string;
+  userBank: IUserBank;
+  customerId: number;
+  authorities: TAuthority[];
+  verified: boolean;
+  accountNonLocked: boolean;
+}
+
+
+export interface IUserBank {
+  id: string;
+  bankName: string;
+  bankId: string;
+  fullName: string;
+}
+
+
+
+export interface TAuthority {
+  authority: string;
+}
 
 export enum EAuthToken {
   ACCESS_TOKEN = "ACCESS_TOKEN",
@@ -74,6 +108,7 @@ export interface IUserData {
   role: Role;
   enabled: boolean;
   username: string;
+  userBank: IUserBank
   accountNonLocked: boolean;
   authorities: Authority[];
   credentialsNonExpired: boolean;
@@ -91,4 +126,13 @@ export interface INotification {
   description: null | string;
   createdAt: Date | null;
   read: boolean;
+}
+
+export enum EUserTypeCategory {
+  USER = "USER",
+  ADMIN = "ADMIN",
+  CUSTOMER = "CUSTOMER",
+  CTV1 = "CTV1",
+  CTV2 = "CTV2",
+  CTV3 = "CTV3",
 }

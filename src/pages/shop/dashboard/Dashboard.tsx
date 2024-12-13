@@ -16,6 +16,7 @@ import {
 } from "../../../services/collection-service";
 import { ICollections } from "../../../interfaces/collection-interface";
 import ListProduct from "./list-product/ListProduct";
+import Cookies from "universal-cookie";
 
 const incentives = [
   {
@@ -43,14 +44,17 @@ const incentives = [
 const Dashboard = () => {
   const [products, setProducts] = useState<IProductResponse[]>([]);
   const [collections, setCollections] = useState<ICollections>();
+  const cookies = new Cookies();
 
   const handleGetKiotTokenAndProduct = () => {
     getTokenFromKiotViet();
-    getDetailCollection(1738133).then((response) => {
+    getDetailCollection(
+      Number(JSON.parse(localStorage.getItem("CategoryParentId") || "")) ||
+      import.meta.env.VITE_COLLECTION_USER_ID
+    ).then((response) => {
       if (response) {
-        console.log(response);
+        // const categories = response.filter((cate) => !cate.categoryName.includes("{DEL}"));
         setCollections(response);
-        console.log(response.children?.reverse());
       }
     });
   };
@@ -65,8 +69,8 @@ const Dashboard = () => {
         <h1>Banner here</h1>
       </div>
       <div className="Dashboard__incentives">
-        {incentives.map((item) => (
-          <div className="Dashboard__incentives-item">
+        {incentives.map((item, index) => (
+          <div className="Dashboard__incentives-item" key={index}>
             <div className="Dashboard__incentives-icon">{item.icon}</div>
             <div className="Dashboard__incentives-content">
               <div className="Dashboard__incentives-title">{item.title}</div>
@@ -78,13 +82,15 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {collections?.children?.map((collection) => (
-        <ListProduct
-          categoryId={collection.categoryId}
-          categoryName={collection.categoryName}
-          key={collection.categoryId}
-        />
-      ))}
+      {collections?.children
+        ?.filter((cate) => !cate.categoryName.includes("{DEL}"))
+        .map((collection) => (
+          <ListProduct
+            categoryId={collection.categoryId}
+            categoryName={collection.categoryName}
+            key={collection.categoryId}
+          />
+        ))}
     </div>
   );
 };
