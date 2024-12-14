@@ -27,6 +27,8 @@ const Product = () => {
       Number(JSON.parse(localStorage.getItem("CategoryParentId") || "")) ||
       import.meta.env.VITE_COLLECTION_USER_ID,
     currentItem: 0,
+    isActive: true,
+    branchIds: [import.meta.env.VITE_BRANCH_ID]
   };
 
   const location = useLocation();
@@ -51,7 +53,7 @@ const Product = () => {
   const handleGetCollections = () => {
     getDetailCollection(
       Number(JSON.parse(localStorage.getItem("CategoryParentId") || "")) ||
-        import.meta.env.VITE_COLLECTION_USER_ID
+      import.meta.env.VITE_COLLECTION_USER_ID
     ).then((response) => {
       if (response) {
         const newCollectiosn = response.children
@@ -91,14 +93,13 @@ const Product = () => {
       <div className="Product__collections">
         <div className="Product__collections-title">Danh mục</div>
         <div
-          className={`Product__collections-item ${
-            filter.categoryId ===
-              Number(
-                JSON.parse(localStorage.getItem("CategoryParentId") || "")
-              ) || import.meta.env.VITE_COLLECTION_USER_ID
-              ? "active"
-              : ""
-          }`}
+          className={`Product__collections-item ${filter.categoryId ===
+            Number(
+              JSON.parse(localStorage.getItem("CategoryParentId") || "")
+            ) || import.meta.env.VITE_COLLECTION_USER_ID
+            ? "active"
+            : ""
+            }`}
           onClick={() =>
             setFilter({
               ...filter,
@@ -114,9 +115,8 @@ const Product = () => {
         </div>
         {collections?.map((collection) => (
           <div
-            className={`Product__collections-item ${
-              filter.categoryId === collection.categoryId ? "active" : ""
-            }`}
+            className={`Product__collections-item ${filter.categoryId === collection.categoryId ? "active" : ""
+              }`}
             onClick={() =>
               setFilter({
                 ...filter,
@@ -134,9 +134,8 @@ const Product = () => {
         <div className="Product__filter">
           <div className="Product__filter-label ">Sắp xếp theo:</div>
           <div
-            className={`Product__filter-name Product__filter-item ${
-              filter.orderBy === "name" ? "active" : ""
-            }`}
+            className={`Product__filter-name Product__filter-item ${filter.orderBy === "name" ? "active" : ""
+              }`}
             onClick={() =>
               setFilter({ ...filter, orderBy: "name", orderDirection: "ASC" })
             }
@@ -144,9 +143,8 @@ const Product = () => {
             A-Z
           </div>
           <div
-            className={`Product__filter-new Product__filter-item ${
-              filter.orderBy === "createdDate" ? "active" : ""
-            }`}
+            className={`Product__filter-new Product__filter-item ${filter.orderBy === "createdDate" ? "active" : ""
+              }`}
             onClick={() =>
               setFilter({
                 ...filter,
@@ -158,9 +156,8 @@ const Product = () => {
             Mới nhất
           </div>
           <div
-            className={`Product__filter-price ${
-              filter.orderBy === "basePrice" ? "active" : ""
-            }`}
+            className={`Product__filter-price ${filter.orderBy === "basePrice" ? "active" : ""
+              }`}
           >
             <TextField
               id="outlined-select-currency"
@@ -202,17 +199,17 @@ const Product = () => {
         <div className="Product__list">
           {loading
             ? Array.from(new Array(20)).map((item, index) => (
-                <div className="Skeleton__product" key={index}>
-                  <Skeleton className="Skeleton__product-img" />
-                  <Skeleton width="100%" />
-                  <Skeleton width="100%" />
-                </div>
-              ))
+              <div className="Skeleton__product" key={index}>
+                <Skeleton className="Skeleton__product-img" />
+                <Skeleton width="100%" />
+                <Skeleton width="100%" />
+              </div>
+            ))
             : products.map((p) => (
-                <div className="Product__list-item" key={p.id}>
-                  <ProductCard product={p} />
-                </div>
-              ))}
+              <div className="Product__list-item" key={p.id}>
+                <ProductCard product={p} />
+              </div>
+            ))}
           {!products.length && (
             <div className="Product__no-product">
               Không có sản phẩm bạn cần tìm

@@ -8,7 +8,7 @@ import { getTokenFromKiotViet } from "../../../services/auth-service";
 import leafImg from "../../../assets/images/logo-leaf-new.png";
 import { getProducts } from "../../../services/product-service";
 import { IProductResponse } from "../../../interfaces/product-interface";
-import { EAuthToken } from "../../../interfaces/user-interfaces";
+import { EAuthToken, TUserDetails } from "../../../interfaces/user-interfaces";
 import bigLeafImg from "../../../assets/images/basil-leaf.png";
 import {
   getCollections,
@@ -17,6 +17,8 @@ import {
 import { ICollections } from "../../../interfaces/collection-interface";
 import ListProduct from "./list-product/ListProduct";
 import Cookies from "universal-cookie";
+import { createCustomer } from "../../../services/customer-service";
+import { toastError } from "../../../utils/notifications-utils";
 
 const incentives = [
   {
@@ -46,17 +48,31 @@ const Dashboard = () => {
   const [collections, setCollections] = useState<ICollections>();
   const cookies = new Cookies();
 
-  const handleGetKiotTokenAndProduct = () => {
-    getTokenFromKiotViet();
-    getDetailCollection(
-      Number(JSON.parse(localStorage.getItem("CategoryParentId") || "")) ||
-      import.meta.env.VITE_COLLECTION_USER_ID
-    ).then((response) => {
-      if (response) {
-        // const categories = response.filter((cate) => !cate.categoryName.includes("{DEL}"));
-        setCollections(response);
+  const handleGetKiotTokenAndProduct = async () => {
+
+    try {
+
+      await getTokenFromKiotViet();
+
+      const userDetails: TUserDetails = JSON.parse(localStorage.getItem('userDetails') || "")
+
+      console.log(userDetails)
+
+      if (!userDetails.customerId) {
+        const createdCustomerResponse = await createCustomer()
       }
-    });
+      getDetailCollection(
+        Number(JSON.parse(localStorage.getItem("CategoryParentId") || "")) ||
+        import.meta.env.VITE_COLLECTION_USER_ID
+      ).then((response) => {
+        if (response) {
+          setCollections(response);
+        }
+      });
+    } catch (error) {
+      toastError("Error: ", error as string)
+    }
+
   };
 
   useEffect(() => {

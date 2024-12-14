@@ -11,6 +11,10 @@ export const getProducts = async (
   cb?: () => void
 ) => {
   try {
+    // if (payload) {
+    //   payload.branchIds = [import.meta.env.VITE_BRANCH_ID]
+    // }
+
     const params = new URLSearchParams(payload as Record<string, string>);
     const response: AxiosResponse<IKiotResponse<IProductResponse[]>> =
       await axios.get(`/kiot/products?${params}`, {

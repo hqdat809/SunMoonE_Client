@@ -7,6 +7,12 @@ export default defineConfig({
     proxy: {
       "/api/v1": {
         target: "http://103.179.191.149:8080",
+        // target: "http://localhost:8080",
+        changeOrigin: true,
+      },
+      "/api/v1/user": {
+        // target: "http://103.179.191.149:8080",
+        target: "http://localhost:8080/api/v1/user",
         changeOrigin: true,
       },
       "/kiot": {

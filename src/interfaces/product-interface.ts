@@ -11,7 +11,7 @@ export interface IProductRequest {
   masterUnitId?: number; //Id hàng hoá đơn vị cần filter
   masterProductId?: number; //Id hàng hoá cùng loại cần filter
   categoryId?: number | string | number[]; //Id nhóm hàng cần filter
-  BranchIds?: number[]; //Id chi nhánh cần xem tồn kho
+  branchIds?: number[]; //Id chi nhánh cần xem tồn kho
   orderDirection?: string;
   includeRemoveIds?: boolean; //Có lấy thông tin danh sách Id bị xoá dựa
   includeQuantity?: boolean; //có lấy thông tin định mức tồn

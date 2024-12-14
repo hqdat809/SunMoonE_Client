@@ -54,27 +54,184 @@ const RegisterForm = ({ setHasAccount }: IRegisterProps) => {
 
   const handleSendOtp = (values?: string) => {
     setIsSendOTP(true);
-    authService.sendOTP(values || email).finally(() => {});
+    authService.sendOTP(values || email).finally(() => { });
   };
 
   const handleNavigateToHomePage = () => {
     navigate(RoutePath.DASHBOARD, { replace: true });
   };
 
-  const handleSubmit = (
+  const handleSubmit = async (
     values: TRegisterRequest,
     formikProps: FormikHelpers<any>
   ) => {
     setLoading(true);
     setEmail(values.email);
-    authService.register(values, handleSendOtp, formikProps).finally(() => {
+    await authService.register(values, formikProps).finally(() => {
       setLoading(false);
     });
+    handleNavigateToHomePage()
   };
 
   return (
     <div className="col-md-8 col-lg-6 col-xl-4 offset-xl-1 register__form">
-      {isSendOTP ? (
+      <Formik
+        initialValues={{
+          firstName: "",
+          lastName: "",
+          email: "",
+          password: "",
+          phone: "",
+        }}
+        validationSchema={validationSchema}
+        onSubmit={(values, formikProps) => {
+          handleSubmit(values, formikProps);
+        }}
+      >
+        {(formikProps) => (
+          <Form onSubmit={formikProps.handleSubmit}>
+            <div className="divider d-flex align-items-center my-4">
+              <div className="text-center fw-bold mx-3 mb-0 login-title">
+                Đăng Ký
+              </div>
+            </div>
+
+            <div className="form-outline mb-4 register__row">
+              <div>
+                <Field
+                  type="text"
+                  name="firstName"
+                  label="Họ"
+                  as={TextField}
+                  error={
+                    formikProps.errors.firstName &&
+                    formikProps.touched.firstName
+                  }
+                  id="form3Example3"
+                  className={`form-control form-control-lg  ${formikProps.errors.firstName &&
+                    formikProps.touched.firstName &&
+                    "login-error-field"
+                    }`}
+                  placeholder="Họ"
+                />
+                <ErrorMessage
+                  name="firstName"
+                  component="div"
+                  className="login-error-text"
+                />
+              </div>
+
+              <div>
+                <Field
+                  type="text"
+                  name="lastName"
+                  label="Tên"
+                  error={
+                    formikProps.errors.lastName &&
+                    formikProps.touched.lastName
+                  }
+                  as={TextField}
+                  id="form3Example3"
+                  className={`form-control form-control-lg  ${formikProps.errors.lastName &&
+                    formikProps.touched.lastName &&
+                    "login-error-field"
+                    }`}
+                  placeholder="Tên"
+                />
+                <ErrorMessage
+                  name="lastName"
+                  component="div"
+                  className="login-error-text"
+                />
+              </div>
+            </div>
+
+            <div className="form-outline mb-4">
+              <Field
+                type="email"
+                name="email"
+                label="Email"
+                error={formikProps.errors.email && formikProps.touched.email}
+                as={TextField}
+                id="form3Example3"
+                className={`form-control form-control-lg  ${formikProps.errors.email &&
+                  formikProps.touched.email &&
+                  "login-error-field"
+                  }`}
+                placeholder="Enter a valid email address"
+              />
+              <ErrorMessage
+                name="email"
+                component="div"
+                className="login-error-text"
+              />
+            </div>
+            <div className="form-outline mb-3">
+              <Field
+                type="password"
+                name="password"
+                label="Mật khẩu"
+                error={
+                  formikProps.errors.password && formikProps.touched.password
+                }
+                as={TextField}
+                id="form3Example4"
+                className={`form-control form-control-lg  ${formikProps.errors.password &&
+                  formikProps.touched.password &&
+                  "login-error-field"
+                  }`}
+                placeholder="Nhập mật khẩu"
+              />
+              <ErrorMessage
+                name="password"
+                component="div"
+                className="login-error-text"
+              />
+            </div>
+            <div className="form-outline mb-3">
+              <Field
+                type="text"
+                name="phone"
+                label="Số điện thoại"
+                error={formikProps.errors.phone && formikProps.touched.phone}
+                as={TextField}
+                id="form3Example4"
+                className={`form-control form-control-lg  ${formikProps.errors.phone &&
+                  formikProps.touched.phone &&
+                  "login-error-field"
+                  }`}
+                placeholder="Nhập mật số điện thoại"
+              />
+              <ErrorMessage
+                name="phone"
+                component="div"
+                className="login-error-text"
+              />
+            </div>
+            <div className="text-center text-lg-start mt-4 pt-2 login-actions">
+              <LoadingButton
+                loading={loading}
+                type="submit"
+                variant="contained"
+                className="btn btn-primary btn-lg btn-login"
+              >
+                Đăng Ký
+              </LoadingButton>
+              <p className="small fw-bold mt-2 pt-1 mb-0 text-center">
+                Bạn đã có tài khoản?
+                <a
+                  href="#!"
+                  className="link-danger"
+                  onClick={() => setHasAccount(true)}
+                >
+                  Đăng nhập
+                </a>
+              </p>
+            </div>
+          </Form>
+        )}
+      </Formik>
+      {/* {isSendOTP ? (
         <Formik
           initialValues={{
             otp: "",
@@ -129,172 +286,12 @@ const RegisterForm = ({ setHasAccount }: IRegisterProps) => {
               {/* <div className="skip-action">
                 <div className="skip-button">Bỏ qua</div>
               </div> */}
-            </Form>
+      {/* </Form>
           )}
         </Formik>
       ) : (
-        <Formik
-          initialValues={{
-            firstName: "",
-            lastName: "",
-            email: "",
-            password: "",
-            phone: "",
-          }}
-          validationSchema={validationSchema}
-          onSubmit={(values, formikProps) => {
-            handleSubmit(values, formikProps);
-          }}
-        >
-          {(formikProps) => (
-            <Form onSubmit={formikProps.handleSubmit}>
-              <div className="divider d-flex align-items-center my-4">
-                <div className="text-center fw-bold mx-3 mb-0 login-title">
-                  Đăng Ký
-                </div>
-              </div>
-
-              <div className="form-outline mb-4 register__row">
-                <div>
-                  <Field
-                    type="text"
-                    name="firstName"
-                    label="Họ"
-                    as={TextField}
-                    error={
-                      formikProps.errors.firstName &&
-                      formikProps.touched.firstName
-                    }
-                    id="form3Example3"
-                    className={`form-control form-control-lg  ${
-                      formikProps.errors.firstName &&
-                      formikProps.touched.firstName &&
-                      "login-error-field"
-                    }`}
-                    placeholder="Họ"
-                  />
-                  <ErrorMessage
-                    name="firstName"
-                    component="div"
-                    className="login-error-text"
-                  />
-                </div>
-
-                <div>
-                  <Field
-                    type="text"
-                    name="lastName"
-                    label="Tên"
-                    error={
-                      formikProps.errors.lastName &&
-                      formikProps.touched.lastName
-                    }
-                    as={TextField}
-                    id="form3Example3"
-                    className={`form-control form-control-lg  ${
-                      formikProps.errors.lastName &&
-                      formikProps.touched.lastName &&
-                      "login-error-field"
-                    }`}
-                    placeholder="Tên"
-                  />
-                  <ErrorMessage
-                    name="lastName"
-                    component="div"
-                    className="login-error-text"
-                  />
-                </div>
-              </div>
-
-              <div className="form-outline mb-4">
-                <Field
-                  type="email"
-                  name="email"
-                  label="Email"
-                  error={formikProps.errors.email && formikProps.touched.email}
-                  as={TextField}
-                  id="form3Example3"
-                  className={`form-control form-control-lg  ${
-                    formikProps.errors.email &&
-                    formikProps.touched.email &&
-                    "login-error-field"
-                  }`}
-                  placeholder="Enter a valid email address"
-                />
-                <ErrorMessage
-                  name="email"
-                  component="div"
-                  className="login-error-text"
-                />
-              </div>
-              <div className="form-outline mb-3">
-                <Field
-                  type="password"
-                  name="password"
-                  label="Mật khẩu"
-                  error={
-                    formikProps.errors.password && formikProps.touched.password
-                  }
-                  as={TextField}
-                  id="form3Example4"
-                  className={`form-control form-control-lg  ${
-                    formikProps.errors.password &&
-                    formikProps.touched.password &&
-                    "login-error-field"
-                  }`}
-                  placeholder="Nhập mật khẩu"
-                />
-                <ErrorMessage
-                  name="password"
-                  component="div"
-                  className="login-error-text"
-                />
-              </div>
-              <div className="form-outline mb-3">
-                <Field
-                  type="text"
-                  name="phone"
-                  label="Số điện thoại"
-                  error={formikProps.errors.phone && formikProps.touched.phone}
-                  as={TextField}
-                  id="form3Example4"
-                  className={`form-control form-control-lg  ${
-                    formikProps.errors.phone &&
-                    formikProps.touched.phone &&
-                    "login-error-field"
-                  }`}
-                  placeholder="Nhập mật số điện thoại"
-                />
-                <ErrorMessage
-                  name="phone"
-                  component="div"
-                  className="login-error-text"
-                />
-              </div>
-              <div className="text-center text-lg-start mt-4 pt-2 login-actions">
-                <LoadingButton
-                  loading={loading}
-                  type="submit"
-                  variant="contained"
-                  className="btn btn-primary btn-lg btn-login"
-                >
-                  Đăng Ký
-                </LoadingButton>
-                <p className="small fw-bold mt-2 pt-1 mb-0 text-center">
-                  Bạn đã có tài khoản?
-                  <a
-                    href="#!"
-                    className="link-danger"
-                    onClick={() => setHasAccount(true)}
-                  >
-                    Đăng nhập
-                  </a>
-                </p>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      )}
+       
+      )} */}
     </div>
   );
 };

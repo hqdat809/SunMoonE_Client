@@ -24,6 +24,8 @@ export const signIn = async (payload: TSignInRequest, cb?: () => void) => {
 
     if (response.status === 200) {
       saveStorageToken(response.data.token);
+
+      console.log("login: ", response.data.userDetails)
       localStorage.setItem(
         "userDetails",
         JSON.stringify(response.data.userDetails)
@@ -96,7 +98,7 @@ export const signIn = async (payload: TSignInRequest, cb?: () => void) => {
 
 export const register = async (
   payload: TRegisterRequest,
-  cb?: (value?: string) => void,
+  // cb?: (value?: string) => void,
   cbe?: FormikHelpers<any>
 ) => {
   try {
@@ -108,23 +110,23 @@ export const register = async (
       branchId: 1000000900
     }
 
-    const createdCustomerResponse = await createCustomer(customerData)
+    // const createdCustomerResponse = await createCustomer(customerData)
 
-    if (!createdCustomerResponse) {
-      throw new Error("Customer not created")
-    }
+    // if (!createdCustomerResponse) {
+    //   throw new Error("Customer not created")
+    // }
 
-    const registerValues = { ...payload, role: "USER", customerId: createdCustomerResponse.data.id };
+    // const registerValues = { ...payload, role: "USER", customerId: createdCustomerResponse.data.id };
 
 
     const response: AxiosResponse<TSignInResponse> = await ApiClient.post(
       `/api/v1/auth/register`,
-      registerValues
+      payload
     );
 
     if (response.status === 200) {
       saveStorageToken(response.data.token);
-      cb?.(registerValues.email);
+      // cb?.(payload.email);
     }
 
     return response.data;
