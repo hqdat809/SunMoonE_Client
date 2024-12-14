@@ -3,6 +3,7 @@ import { EAuthToken } from "../interfaces/user-interfaces";
 import { ICollections } from "../interfaces/collection-interface";
 import { TCreateCustomer } from "../interfaces/customer-interface";
 import { ApiClient } from "./api-clients";
+import { getAppBarUtilityClass } from "@mui/material";
 
 export const createCustomer = async () => {
 
@@ -42,7 +43,7 @@ export const createCustomer = async () => {
 
         console.log("response.data: ", response.data.data)
 
-        const user = await axios.put(
+        const user = await ApiClient.put(
             `/api/v1/user/update-customer-id/${userDetails.id}?customerId=${response.data.data.id}`);
 
         console.log(user.data)

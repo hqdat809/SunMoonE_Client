@@ -119,7 +119,7 @@ export const register = async (
     // const registerValues = { ...payload, role: "USER", customerId: createdCustomerResponse.data.id };
 
 
-    const response: AxiosResponse<TSignInResponse> = await axios.post(
+    const response: AxiosResponse<TSignInResponse> = await ApiClient.post(
       `/api/v1/auth/register`,
       payload
     );
