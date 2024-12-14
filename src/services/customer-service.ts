@@ -42,7 +42,7 @@ export const createCustomer = async () => {
 
         console.log("response.data: ", response.data.data)
 
-        const user = await ApiClient.put(
+        const user = await axios.put(
             `/api/v1/user/update-customer-id/${userDetails.id}?customerId=${response.data.data.id}`);
 
         console.log(user.data)
