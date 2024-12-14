@@ -10,10 +10,10 @@ export default defineConfig({
         // target: "http://localhost:8080",
         changeOrigin: true,
       },
-      "/api/v1/user": {
-        // target: "http://103.179.191.149:8080",
-        target: "http://localhost:8080/api/v1/user",
-        changeOrigin: true,
+      "/api/v1/auth/register": {
+        target: "http://103.179.191.149:8080/api/v1/auth/register",
+        // target: "http://localhost:8080",
+        changeOrigin: false,
       },
       "/kiot": {
         target: "https://public.kiotapi.com",
