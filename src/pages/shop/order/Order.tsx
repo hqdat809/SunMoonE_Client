@@ -67,6 +67,7 @@ const Order = () => {
 
   const handleChange = (event: React.SyntheticEvent, newValue: PAYMENT_TYPE) => {
     setPayment(newValue);
+    setProductInCart(cart)
   };
 
   const handleGetProvices = () => {
@@ -482,87 +483,6 @@ const Order = () => {
           </div>
         )}
       </div>
-      <div className="Order__products">
-        <div className="Order__title">
-          <div className="Order__title-icon">
-            <InventoryIcon />
-          </div>
-          <div className="Order__title-text">Sản phẩm</div>
-        </div>
-        <div className="Order__listProduct">
-          {productInCart.map((cartItem, index) => (
-            <div className="Order__item">
-              <div
-                className="Order__item-image"
-                style={{
-                  backgroundImage: `url(${cartItem.details?.images?.[0]})`,
-                }}
-              ></div>
-              <div className="Order__item-name">{cartItem.details?.name}</div>
-              <div className="Order__item-price">
-                {payment === PAYMENT_TYPE.COLLECTOR ?
-                  <InputBase
-                    type="number"
-                    className="Order__item-price-input"
-                    dir="rtl"
-                    value={cartItem.details?.basePrice}
-                    onChange={(e) => handleChangePrice(e, cartItem)} />
-                  : cartItem.details?.basePrice.toLocaleString("vi-VN")}
-              </div>
-              <span>x</span>
-              <div className="Order__item-quantity">
-                <div className="Order__item-quantity-input">
-                  <div className="Order__item-quantity">
-                    <div
-                      className="Order__item-desc"
-                      onClick={() => {
-                        handleChangeQuantity(index, "MINUS");
-                      }}
-                    >
-                      -
-                    </div>
-                    <div className="Order__item-number">
-                      <input value={cartItem.count} />
-                    </div>
-                    <div
-                      className="Order__item-asc"
-                      onClick={() => {
-                        handleChangeQuantity(index, "PLUS");
-                      }}
-                    >
-                      +
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <span>=</span>
-              <div className="Order__item-totalPrice">
-                {(cartItem.details?.basePrice * cartItem.count).toLocaleString(
-                  "vi-VN"
-                )}
-                đ
-              </div>
-              <div
-                className="Order__item-action"
-                onClick={() => handleDeleteItem(index)}
-              >
-                <DeleteIcon />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="Order__total">
-          <div className="Order__total-label">Tổng cộng:</div>
-          <div className="Order__total-item">
-            {handleGetTotalItemInCart()} <span>(sản phẩm)</span>
-          </div>
-          <span>=</span>
-          <div className="Order__total-price">
-            {handleGetTotalPriceCollector()}đ
-          </div>
-        </div>
-      </div>
       <div className="Order__delivery">
         <div className="Order__title">
           <div className="Order__title-icon">
@@ -668,6 +588,88 @@ const Order = () => {
           </Box>
         </div>
       </div>
+      <div className="Order__products">
+        <div className="Order__title">
+          <div className="Order__title-icon">
+            <InventoryIcon />
+          </div>
+          <div className="Order__title-text">Sản phẩm</div>
+        </div>
+        <div className="Order__listProduct">
+          {productInCart.map((cartItem, index) => (
+            <div className="Order__item">
+              <div
+                className="Order__item-image"
+                style={{
+                  backgroundImage: `url(${cartItem.details?.images?.[0]})`,
+                }}
+              ></div>
+              <div className="Order__item-name">{cartItem.details?.name}</div>
+              <div className="Order__item-price">
+                {payment === PAYMENT_TYPE.COLLECTOR ?
+                  <InputBase
+                    type="number"
+                    className="Order__item-price-input"
+                    dir="rtl"
+                    value={cartItem.details?.basePrice}
+                    onChange={(e) => handleChangePrice(e, cartItem)} />
+                  : cartItem.details?.basePrice.toLocaleString("vi-VN")}
+              </div>
+              <span>x</span>
+              <div className="Order__item-quantity">
+                <div className="Order__item-quantity-input">
+                  <div className="Order__item-quantity">
+                    <div
+                      className="Order__item-desc"
+                      onClick={() => {
+                        handleChangeQuantity(index, "MINUS");
+                      }}
+                    >
+                      -
+                    </div>
+                    <div className="Order__item-number">
+                      <input value={cartItem.count} />
+                    </div>
+                    <div
+                      className="Order__item-asc"
+                      onClick={() => {
+                        handleChangeQuantity(index, "PLUS");
+                      }}
+                    >
+                      +
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <span>=</span>
+              <div className="Order__item-totalPrice">
+                {(cartItem.details?.basePrice * cartItem.count).toLocaleString(
+                  "vi-VN"
+                )}
+                đ
+              </div>
+              <div
+                className="Order__item-action"
+                onClick={() => handleDeleteItem(index)}
+              >
+                <DeleteIcon />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="Order__total">
+          <div className="Order__total-label">Tổng cộng:</div>
+          <div className="Order__total-item">
+            {handleGetTotalItemInCart()} <span>(sản phẩm)</span>
+          </div>
+          <span>=</span>
+          <div className="Order__total-price">
+            {handleGetTotalPriceCollector()}đ
+          </div>
+        </div>
+      </div>
+
       <div className="Order__note">
         <div className="Order__title">
           <div className="Order__title-icon">
