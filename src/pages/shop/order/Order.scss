@@ -206,6 +206,11 @@
       display: flex;
       flex: 1;
       justify-content: center;
+
+        &-input {
+          width: 100px;
+          color: $primary-color !important;
+        }
     }
 
     &-quantity {
@@ -219,8 +224,11 @@
       flex: 1;
       color: $primary-color;
       justify-content: center;
+      align-items: center;
       font-weight: bold;
       font-size: 16px;
+      gap: 4px;
+
     }
 
     &-action {
@@ -266,7 +274,7 @@
 }
 
 .Order {
-  &__delivery {
+  &__delivery, &__note {
     display: flex;
     background-color: $white;
     margin: 0 100px 20px 100px;
@@ -276,6 +284,19 @@
     gap: 20px;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   }
+  
+
+  &__note {
+    &-textarea {
+      width: 100%;
+      height: 120px;
+      padding: 12px 15px;
+      font-size: 18px;
+      border-radius: 10px;
+      color: $neutrals_07;
+    }
+  }
+
 
   &__tabs {
     .MuiTab-root.Mui-selected {

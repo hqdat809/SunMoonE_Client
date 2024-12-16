@@ -36,7 +36,7 @@ export const CartContext = createContext({
   setCart: (cart: ICart[]) => { },
 });
 
-interface ICart {
+export interface ICart {
   details: IProductResponse;
   count: number;
 }

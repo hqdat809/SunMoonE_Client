@@ -4,11 +4,11 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { LoadingButton } from "@mui/lab";
 import * as Yup from "yup";
-import { Button, Divider, FormLabel, Input, MenuItem, Select, TextField } from "@mui/material";
+import { Button, Divider, FormLabel, Input, InputBase, MenuItem, Select, TextareaAutosize, TextField } from "@mui/material";
 import * as provinceService from "../../../services/province-service";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import InventoryIcon from "@mui/icons-material/Inventory";
-import { CartContext } from "../../layouts/Layouts";
+import { CartContext, ICart } from "../../layouts/Layouts";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
@@ -57,7 +57,10 @@ const Order = () => {
   const [listProvince, setListProvince] = useState<any[]>([]);
   const [listDistrict, setListDistrict] = useState<any[]>([]);
   const [listWard, setListWard] = useState<any[]>([]);
-  const [collector, setCollector] = useState<any>();
+  const [productInCart, setProductInCart] = useState<ICart[]>(cart);
+
+  const [note, setNote] = useState("");
+
 
 
   const [payment, setPayment] = React.useState(PAYMENT_TYPE.COD);
@@ -116,6 +119,14 @@ const Order = () => {
     return totalPrice.toLocaleString("vi-VN");
   }, [cart]);
 
+  const handleGetTotalPriceCollector = useCallback(() => {
+    let totalPrice = 0;
+    productInCart.forEach((item) => {
+      totalPrice += item.details.basePrice * item.count;
+    });
+    return totalPrice.toLocaleString("vi-VN");
+  }, [productInCart]);
+
   const handleGetTotalPriceInCart = useCallback(() => {
     let totalPrice = 0;
     cart.forEach((item) => {
@@ -137,6 +148,21 @@ const Order = () => {
       setCart(newListCart);
     }
   };
+
+  const handleChangeNote = (e: any) => {
+    setNote(e.target.value);
+  }
+
+  const handleChangePrice = (e: any, cartDetail: ICart) => {
+    const newCarts = cart.map(c => {
+      if (c.details.id === cartDetail.details.id) {
+        return ({ ...c, details: { ...cartDetail.details, basePrice: e.target.value } })
+      }
+      return c;
+    })
+
+    setProductInCart(newCarts)
+  }
 
 
   const handleCreateOrder = async () => {
@@ -167,16 +193,11 @@ const Order = () => {
         description = "BANKING"
         break;
       case (PAYMENT_TYPE.COLLECTOR):
-        description = "Thu hộ " + collector + "đ"
+        description = "Thu hộ " + handleGetTotalPriceCollector() + "đ"
         break;
     }
 
-    if (payment === PAYMENT_TYPE.COD) {
-      description = "COD"
-    }
-
     const userDetails = JSON.parse(localStorage.getItem("userDetails") || "")
-
 
     const address = `${addressRecipient.address}, ${addressRecipient.ward}, ${addressRecipient.district}, ${addressRecipient.province}`;
     const customerDetails = {
@@ -192,7 +213,7 @@ const Order = () => {
     }
 
     const newOrder = {
-      description: description,
+      description: description + '\n' + note,
       saleChannelId: 1000003992,
       branchId: 286368,
       orderDetails,
@@ -206,6 +227,11 @@ const Order = () => {
     navigate(RoutePath.ORDER_LIST);
     setCart([])
   }
+
+  useEffect(() => {
+    setProductInCart(cart);
+  }, [cart]);
+
 
   return (
     <div className="Order">
@@ -464,7 +490,7 @@ const Order = () => {
           <div className="Order__title-text">Sản phẩm</div>
         </div>
         <div className="Order__listProduct">
-          {cart.map((cartItem, index) => (
+          {productInCart.map((cartItem, index) => (
             <div className="Order__item">
               <div
                 className="Order__item-image"
@@ -474,7 +500,14 @@ const Order = () => {
               ></div>
               <div className="Order__item-name">{cartItem.details?.name}</div>
               <div className="Order__item-price">
-                {cartItem.details?.basePrice.toLocaleString("vi-VN")}đ
+                {payment === PAYMENT_TYPE.COLLECTOR ?
+                  <InputBase
+                    type="number"
+                    className="Order__item-price-input"
+                    dir="rtl"
+                    value={cartItem.details?.basePrice}
+                    onChange={(e) => handleChangePrice(e, cartItem)} />
+                  : cartItem.details?.basePrice.toLocaleString("vi-VN")}
               </div>
               <span>x</span>
               <div className="Order__item-quantity">
@@ -526,7 +559,7 @@ const Order = () => {
           </div>
           <span>=</span>
           <div className="Order__total-price">
-            {handleGetTotalPriceInCart()}đ
+            {handleGetTotalPriceCollector()}đ
           </div>
         </div>
       </div>
@@ -624,14 +657,26 @@ const Order = () => {
               </TabPanel>
               <TabPanel value={PAYMENT_TYPE.COLLECTOR}>
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                  <FormLabel >Nhập mức tiền thu hộ (vnđ)</FormLabel>
+                  Chỉnh sửa giá của từng sản phẩm theo mức thu hộ, tổng thu hộ <span style={{ fontSize: 20, fontWeight: 'bold' }}>{handleGetTotalPriceCollector()}</span>đ
+                  {/* <FormLabel >Nhập mức tiền thu hộ (vnđ)</FormLabel>
                   <Input value={collector} placeholder="VND" onChange={(e) => {
                     setCollector(Number(e.target.value.replace(/\D/g, "")).toLocaleString('vi-VN'))
-                  }} />
+                  }} /> */}
                 </div>
               </TabPanel>
             </TabContext>
           </Box>
+        </div>
+      </div>
+      <div className="Order__note">
+        <div className="Order__title">
+          <div className="Order__title-icon">
+            <PaymentsIcon />
+          </div>
+          <div className="Order__title-text">Ghi chú</div>
+        </div>
+        <div className="Order__tabs">
+          <textarea onChange={handleChangeNote} className="Order__note-textarea" placeholder="Nhập ghi chú..." cols={5} />
         </div>
       </div>
       <div className="Order__bill">
