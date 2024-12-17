@@ -1,5 +1,5 @@
 import { MenuItem, Pagination, Skeleton, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ICollections } from "../../../interfaces/collection-interface";
 import {
   IProductRequest,
@@ -11,6 +11,7 @@ import ProductCard from "../dashboard/product-card/ProductCard";
 import "./Product.scss";
 import { useLocation, useParams } from "react-router-dom";
 import { EUserTypeCategory } from "../../../interfaces/user-interfaces";
+import * as _ from "lodash";
 
 const priceSelections = [
   { label: "Mặc định", value: "default" },
@@ -63,6 +64,22 @@ const Product = () => {
       }
     });
   };
+
+  const handleInputSearchText = (values: string) => {
+    debouncedFetch(values);
+  };
+
+  const debouncedFetch = useCallback(
+    _.debounce(
+      (values: string) => setFilter({ ...filter, currentItem: 0, name: values }),
+      1000
+    ),
+    [filter]
+  );
+
+  const handleSearchByName = (e: any) => {
+    debouncedFetch(e.target.value);
+  }
 
   const handleGetProduct = () => {
     getProducts(filter)
@@ -195,6 +212,9 @@ const Product = () => {
               ))}
             </TextField>
           </div>
+          <div className={`Product__filter-search `} style={{ flex: 1 }}>
+            <TextField fullWidth label="Tìm kiếm..." variant='outlined' size='small' placeholder='Nhập để tìm kiếm...' onChange={handleSearchByName} />
+          </div>
         </div>
         <div className="Product__list">
           {loading
@@ -236,7 +256,7 @@ const Product = () => {
           />
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

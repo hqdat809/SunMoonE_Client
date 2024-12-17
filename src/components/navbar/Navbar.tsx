@@ -1,19 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
-import "./Navbar.scss";
-import logo from "../../assets/images/icon.jpg";
-import { useNavigate } from "react-router-dom";
-import * as RoutePath from "../../routes/paths";
-import SearchButton from "../search-button/SearchButton";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { CartContext } from "../../pages/layouts/Layouts";
-import ShoppingCartTwoToneIcon from "@mui/icons-material/ShoppingCartTwoTone";
-import { Avatar, Badge, Divider, ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
-import { EAuthToken, TUserDetails } from "../../interfaces/user-interfaces";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import LogoutIcon from '@mui/icons-material/Logout';
-import { getTokenFromKiotViet } from "../../services/auth-service";
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
+import LogoutIcon from '@mui/icons-material/Logout';
+import ShoppingCartTwoToneIcon from "@mui/icons-material/ShoppingCartTwoTone";
+import { Avatar, Badge, Divider, Input, ListItemIcon, ListItemText, Menu, MenuItem, TextField } from "@mui/material";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import logo from "../../assets/images/icon.jpg";
+import { EAuthToken, TUserDetails } from "../../interfaces/user-interfaces";
+import { CartContext } from "../../pages/layouts/Layouts";
+import * as RoutePath from "../../routes/paths";
 import { getListOrder } from "../../services/order-service";
+import SearchButton from "../search-button/SearchButton";
+import "./Navbar.scss";
 
 const listRouteNavbar = [
   { label: "Trang chủ", path: RoutePath.DASHBOARD },
@@ -108,7 +106,8 @@ const Navbar = () => {
       </div>
       <div className="Navbar__right">
         <div className="Navbar__search">
-          <SearchButton />
+          {/* <TextField variant='outlined' size='small' placeholder='Tìm kiếm...' /> */}
+          {/* <SearchButton /> */}
         </div>
         <div className="Navbar__cart" onClick={() => navigate(RoutePath.ORDER_LIST)}>
           <Badge
