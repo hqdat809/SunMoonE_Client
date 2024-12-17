@@ -62,3 +62,10 @@
     flex: 7;
   }
 }
+
+
+@media (max-width: 767px) {
+  .ListProducts {
+    display: none;
+  }
+}

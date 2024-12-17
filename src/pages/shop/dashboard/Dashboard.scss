@@ -157,3 +157,22 @@
     left: 45%;
   }
 }
+
+/* Mobile */
+@media (max-width: 767px) {
+ .Dashboard {
+
+  &__incentives {
+    padding: 20px 0;
+    flex-direction: column;
+  }
+
+ }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1024px) {
+ 
+}
+
+

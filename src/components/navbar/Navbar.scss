@@ -125,3 +125,53 @@
     }
   }
 }
+
+
+/* Mobile */
+@media (max-width: 767px) {
+ .Navbar {
+
+  padding: 0;
+  justify-content: flex-end;
+
+
+  &__menu {
+    width: 56px;
+    height: 56px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+
+    &:hover {
+      background-color: $pink_01;
+    }
+  }
+
+  &__left {
+    display: none;
+  }
+
+  &__right {
+    padding: 0 12px;
+    flex: 1;
+    justify-content: space-between;
+  }
+
+  &__profile {
+    width: 56px;
+    height: 56px;
+    margin-left: 12px;
+  }
+
+  &__auth-name {
+    display: none;
+  }
+ }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1024px) {
+ 
+}
+

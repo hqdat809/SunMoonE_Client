@@ -1,8 +1,15 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import LogoutIcon from '@mui/icons-material/Logout';
+import MailIcon from '@mui/icons-material/Mail';
+import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
 import ShoppingCartTwoToneIcon from "@mui/icons-material/ShoppingCartTwoTone";
-import { Avatar, Badge, Divider, Input, ListItemIcon, ListItemText, Menu, MenuItem, TextField } from "@mui/material";
+import { Avatar, Badge, Divider, Drawer, ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
+import Box from '@mui/material/Box';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/images/icon.jpg";
@@ -10,7 +17,6 @@ import { EAuthToken, TUserDetails } from "../../interfaces/user-interfaces";
 import { CartContext } from "../../pages/layouts/Layouts";
 import * as RoutePath from "../../routes/paths";
 import { getListOrder } from "../../services/order-service";
-import SearchButton from "../search-button/SearchButton";
 import "./Navbar.scss";
 
 const listRouteNavbar = [
@@ -27,6 +33,8 @@ const Navbar = () => {
   const { setOpen, cart } = useContext(CartContext);
   const [orderNumber, setOrderNumber] = useState(0);
 
+  const [openDrawer, setOpenDrawer] = useState(false);
+
   const [userDetails, setUserDetails] = useState<TUserDetails>();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -35,6 +43,9 @@ const Navbar = () => {
     setAnchorEl(event.currentTarget);
   };
 
+  const toggleDrawer = (newOpen: boolean) => () => {
+    setOpenDrawer(newOpen);
+  };
 
   const handleNavigateLoginPage = () => {
     navigate(RoutePath.AUTH);
@@ -76,6 +87,10 @@ const Navbar = () => {
     if (res) setOrderNumber(res.data.length || 0)
   }
 
+  const handleNavigateMenu = (path: string) => {
+    navigate(path)
+    setOpenDrawer(false)
+  }
   useEffect(() => {
     const details = localStorage.getItem("userDetails");
     if (details && details != undefined) {
@@ -84,6 +99,23 @@ const Navbar = () => {
 
     handleGetListOrder()
   }, []);
+
+  const DrawerList = (
+    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+
+      <Divider />
+      <List>
+        {listRouteNavbar.map(({ label, path }, index) => (
+          <ListItem key={label} disablePadding onClick={() => handleNavigateMenu(path)}>
+            <ListItemButton>
+              <ListItemText primary={label} />
+            </ListItemButton>
+            <Divider />
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
 
   return (
     <div className="Navbar">
@@ -105,9 +137,8 @@ const Navbar = () => {
         </div>
       </div>
       <div className="Navbar__right">
-        <div className="Navbar__search">
-          {/* <TextField variant='outlined' size='small' placeholder='Tìm kiếm...' /> */}
-          {/* <SearchButton /> */}
+        <div className='Navbar__menu' style={{ display: 'none' }} onClick={toggleDrawer(true)}>
+          <MenuRoundedIcon />
         </div>
         <div className="Navbar__cart" onClick={() => navigate(RoutePath.ORDER_LIST)}>
           <Badge
@@ -182,6 +213,10 @@ const Navbar = () => {
           </MenuItem>
         </Menu>
       </div>
+
+      <Drawer open={openDrawer} onClose={toggleDrawer(false)}>
+        {DrawerList}
+      </Drawer>
     </div>
   );
 };

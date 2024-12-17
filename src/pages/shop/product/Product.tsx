@@ -96,6 +96,25 @@ const Product = () => {
       });
   };
 
+  const handleChangeCategory = (e: any) => {
+    if (e.target.value === "default") {
+      setFilter({
+        ...filter,
+        categoryId:
+          Number(
+            JSON.parse(localStorage.getItem("CategoryParentId") || "")
+          ) || import.meta.env.VITE_COLLECTION_USER_ID,
+        currentItem: 0,
+      })
+    } else {
+      setFilter({
+        ...filter,
+        categoryId: e.target.value,
+        currentItem: 0,
+      })
+    }
+  }
+
   useEffect(() => {
     setLoading(true);
     handleGetProduct();
@@ -208,6 +227,35 @@ const Product = () => {
               {priceSelections.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </div>
+          <div className={`Product__filter-category ${filter.categoryId !== Number(
+            JSON.parse(localStorage.getItem("CategoryParentId") || "")
+          ) ? "active" : ""
+            }`} style={{ display: 'none' }}>
+            <TextField
+              id="outlined-select-currency"
+              select
+              label="Danh Mục"
+              size="small"
+              defaultValue="default"
+              disabled={loading}
+              value={
+                filter.categoryId === Number(
+                  JSON.parse(localStorage.getItem("CategoryParentId") || "")
+                ) ? "default" : filter.categoryId
+              }
+              helperText=""
+              onChange={handleChangeCategory}
+            >
+              <MenuItem value="default">
+                Tất cả
+              </MenuItem>
+              {collections?.map((collection) => (
+                <MenuItem key={collection.categoryId} value={collection.categoryId}>
+                  {collection.categoryName}
                 </MenuItem>
               ))}
             </TextField>

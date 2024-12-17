@@ -290,3 +290,9 @@
     }
   }
 }
+
+@media (max-width: 767px) {
+  .Footer {
+    display: none;
+  }
+}
