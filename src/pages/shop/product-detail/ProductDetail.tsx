@@ -147,12 +147,15 @@ const ProductDetail = () => {
           </div>
 
           <div className="ProductDetail__details-price">
+            <div className="ProductDetail__details-newPrice">
+              {details?.basePrice.toLocaleString("vi-VN")}đ
+            </div>
             {details && handleGetOldPrice(details) && (
               <div className="ProductDetail__details-oldPrice">
                 {handleGetOldPrice(details)}đ
               </div>
             )}
-            {details?.basePrice.toLocaleString("vi-VN")}đ
+
           </div>
 
           <div
@@ -248,10 +251,18 @@ const ProductDetail = () => {
         <div className="ProductDetail__productRelated-label">
           Sản phẩm liên quan:
         </div>
+
+        <div className="ProductDetail__productRelated-mobile">
+          {productsRelated.map((p) => (
+            <div className="Product__list-item" key={p.id}>
+              <ProductCard product={p} />
+            </div>
+          ))}
+        </div>
         <Swiper
           modules={[Navigation, Pagination, Scrollbar, A11y]}
-          spaceBetween={50}
-          slidesPerView={4.5}
+          spaceBetween={1.2}
+          slidesPerView={2}
           scrollbar={{ draggable: true }}
           className="ProductDetail__productRelated-swiper"
         >
