@@ -44,3 +44,13 @@
     line-height: 16px;
   }
 }
+
+@media (max-width: 767px) {
+  .wrapper {
+    padding: 0 !important;
+  }
+  .login_card {
+    width: 100vw !important;
+    height: 100vh !important;
+  }
+}

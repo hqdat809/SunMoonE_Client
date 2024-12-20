@@ -286,7 +286,39 @@
 
     &__productRelated {
       margin: 0;
-
+      margin-bottom: 100px;
     }
+
+    &__actions {
+      display: none;
+    }
+    
+    &__actions-mobile {
+      background-color: white;
+      padding: 12px 4px;
+      justify-content: space-between;
+      display: flex !important;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      gap: 6px;
+      font-size: 24px;
+
+      .MuiButtonBase-root {
+        font-size: 16px;
+      }
+
+      .ProductDetail__buy {
+        flex: 1;
+
+        .MuiButtonBase-root {
+          width: 100%;
+        }
+      }
+    }
+
+    
   }
+
 }

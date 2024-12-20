@@ -278,6 +278,16 @@ const ProductDetail = () => {
           ))}
         </Swiper>
       </div>
+      <div className="ProductDetail__actions-mobile" style={{ display: "none" }}>
+        <div className="ProductDetail__addToCart">
+          <Button variant="outlined" onClick={handleAddToCart}>
+            <span>Thêm vào giỏ hàng</span>
+          </Button>
+        </div>
+        <div className="ProductDetail__buy" onClick={handleBuyNow}>
+          <Button variant="contained">Mua ngay</Button>
+        </div>
+      </div>
     </div>
   );
 };

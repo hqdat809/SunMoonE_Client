@@ -4,7 +4,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { LoadingButton } from "@mui/lab";
 import * as Yup from "yup";
-import { Button, Divider, FormLabel, Input, InputBase, MenuItem, Select, TextareaAutosize, TextField } from "@mui/material";
+import { Button, Divider, FormLabel, Input, InputBase, MenuItem, Select, styled, TextareaAutosize, TextField } from "@mui/material";
 import * as provinceService from "../../../services/province-service";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -155,7 +155,7 @@ const Order = () => {
   }
 
   const handleChangePrice = (e: any, cartDetail: ICart) => {
-    const newCarts = cart.map(c => {
+    const newCarts = productInCart.map(c => {
       if (c.details.id === cartDetail.details.id) {
         return ({ ...c, details: { ...cartDetail.details, basePrice: e.target.value } })
       }
@@ -437,7 +437,7 @@ const Order = () => {
                 </div>
                 <div className="Order__userRecipient-info-item">
                   <div className="Order__userRecipient-info-label">
-                    Số điện thoại(+84):
+                    SĐT(+84):
                   </div>
                   <div className="Order__userRecipient-info-values">
                     {addressRecipient?.phoneNumber}
@@ -576,12 +576,13 @@ const Order = () => {
                 </div>
               </TabPanel>
               <TabPanel value={PAYMENT_TYPE.COLLECTOR}>
-                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                  Chỉnh sửa giá của từng sản phẩm theo mức thu hộ, tổng thu hộ <span style={{ fontSize: 20, fontWeight: 'bold' }}>{handleGetTotalPriceCollector()}</span>đ
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexDirection: 'column' }}>
+                  <span><span style={{ textDecoration: "underline" }}>Chú ý:</span> Nhấn vào giá của sản phẩm để chỉnh sửa </span>
                   {/* <FormLabel >Nhập mức tiền thu hộ (vnđ)</FormLabel>
                   <Input value={collector} placeholder="VND" onChange={(e) => {
                     setCollector(Number(e.target.value.replace(/\D/g, "")).toLocaleString('vi-VN'))
                   }} /> */}
+                  <div style={{ fontSize: 20, fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', width: '100%' }}><span>Tổng cộng: </span><span>{handleGetTotalPriceCollector()}đ</span></div>
                 </div>
               </TabPanel>
             </TabContext>
@@ -656,14 +657,78 @@ const Order = () => {
               </div>
             </div>
           ))}
+          {productInCart.map((cartItem, index) => (
+            <div className="Order__item-mobile" style={{ display: 'none' }}>
+              <div
+                className="Order__item-image"
+                style={{
+                  backgroundImage: `url(${cartItem.details?.images?.[0]})`,
+                }}
+              ></div>
+              <div className="Order__item-details">
+                <div className="Order__item-name">{cartItem.details?.name}</div>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div className="Order__item-price">
+                    {payment === PAYMENT_TYPE.COLLECTOR ?
+                      <InputBase
+                        type="number"
+                        className="Order__item-price-input"
+                        value={cartItem.details?.basePrice}
+                        onChange={(e) => handleChangePrice(e, cartItem)} />
+                      : cartItem.details?.basePrice.toLocaleString("vi-VN")}
+                  </div>
+                  <span>x</span>
+                  <div className="Order__item-quantity">
+                    <div className="Order__item-quantity-input">
+                      <div className="Order__item-quantity">
+                        <div
+                          className="Order__item-desc"
+                          onClick={() => {
+                            handleChangeQuantity(index, "MINUS");
+                          }}
+                        >
+                          -
+                        </div>
+                        <div className="Order__item-number">
+                          <input value={cartItem.count} />
+                        </div>
+                        <div
+                          className="Order__item-asc"
+                          onClick={() => {
+                            handleChangeQuantity(index, "PLUS");
+                          }}
+                        >
+                          +
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="Order__item-totalPrice">
+                  {(cartItem.details?.basePrice * cartItem.count).toLocaleString(
+                    "vi-VN"
+                  )}
+                  đ
+                </div>
+                {/* <div
+                  className="Order__item-action"
+                  onClick={() => handleDeleteItem(index)}
+                >
+                  <DeleteIcon />
+                </div> */}
+              </div>
+            </div>
+          ))}
         </div>
 
         <div className="Order__total">
-          <div className="Order__total-label">Tổng cộng:</div>
-          <div className="Order__total-item">
-            {handleGetTotalItemInCart()} <span>(sản phẩm)</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginRight: 20, gap: 8 }}>
+            <div className="Order__total-label">Tổng cộng</div>
+            <div className="Order__total-item">
+              {handleGetTotalItemInCart()} <span>(sản phẩm):</span>
+            </div>
           </div>
-          <span>=</span>
+
           <div className="Order__total-price">
             {handleGetTotalPriceCollector()}đ
           </div>
@@ -715,6 +780,17 @@ const Order = () => {
           <div className="Order__bill-actions">
             <div className="Order__bill-back">
               <Button variant="outlined">Trở lại</Button>
+            </div>
+            <div className="Order__bill-submit" onClick={handleCreateOrder}>
+              <Button variant="contained">Đặt hàng</Button>
+            </div>
+          </div>
+          <div className="Order__bill-actions-mobile" style={{ display: 'none' }}>
+            <div className="Order__bill-actions-details">
+              <div>Tổng cộng: </div>
+              <div className="Order__bill-actions-details-price">
+                {handleGetTotalPriceInCart()}đ
+              </div>
             </div>
             <div className="Order__bill-submit" onClick={handleCreateOrder}>
               <Button variant="contained">Đặt hàng</Button>

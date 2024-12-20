@@ -63,7 +63,7 @@ const OrderListPage = () => {
                 <TableHead>
                     <TableRow>
                         <TableCell><strong>Mã đơn hàng</strong></TableCell>
-                        <TableCell align="center"><strong>Số lượng sản phẩm</strong></TableCell>
+                        <TableCell align="center"><strong>Số lượng</strong></TableCell>
                         <TableCell align="center"><strong>Trạng thái</strong></TableCell>
                         <TableCell align="right"><strong>Tổng tiền</strong></TableCell>
                     </TableRow>

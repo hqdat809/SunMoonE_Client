@@ -250,8 +250,8 @@
     &-label {
       font-size: $font-size-medium;
       color: $neutrals_07;
-      margin-right: 30px;
-    }
+      display: flex;
+    align-items: center;    }
 
     &-item {
       display: flex;
@@ -413,5 +413,121 @@
       justify-content: space-between;
       border-bottom: 1px solid $neutrals_03;
     }
+  }
+}
+@media (max-width: 767px) {
+  .Order {
+    &__userInfo,
+    &__products,
+    &__delivery,
+    &__note,
+    &__bill {
+      margin: 20px 0;
+    }
+    &__userRecipient {
+
+      &-title {
+        display: none;
+      }
+
+      &-info-label {
+        min-width: 120px;
+      }
+
+      &-info-values {
+        font-weight: bold;
+      }
+    }
+
+    &__tabs {
+      .MuiTab-root {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+
+        .MuiTab-icon {
+          margin: 0;
+        }
+      }
+
+      &-banking {
+        flex-direction: column;
+
+        &-qr {
+          padding: 0;
+        }
+      }
+    }
+
+    &__total {
+    }
+
+    &__item {
+      display: none;
+
+      &-name {
+        color: $primary-color;
+        font-weight: bold;
+        flex: 1;
+      }
+
+
+      &-details {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      &-totalPrice {
+        justify-content: flex-end;
+      }
+
+      &-mobile {
+        display: flex !important;
+        gap: 8px;
+      }
+    }
+
+    &__bill {
+      margin-bottom: 70px;
+
+      &-label {
+        min-width: 0;
+      }
+
+      &-actions {
+        display: none;
+
+        &-details {
+          display: flex;
+          flex: 1;
+          gap: 8px;
+          justify-content: flex-end;
+          margin-right: 10px;
+
+          &-price {
+            font-weight: bold;
+            color: $primary-color;
+          }
+        }
+
+        &-mobile {
+          box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 20px;
+          padding: 12px 4px 2px 4px;
+          display: flex !important;
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background-color: $white;
+        }
+      }
+    }
+  }
+
+  .Form__row {
+    flex-direction: column;
   }
 }
