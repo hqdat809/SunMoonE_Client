@@ -139,7 +139,7 @@
 
     &__filter {
       flex-direction: column;
-      &-label, &-name, &-new, &-search {
+      &-label, &-name, &-new {
         display: none;
       }
 
@@ -149,6 +149,10 @@
         .MuiTextField-root {
           width: 100%;
         }
+      }
+
+      &-search {
+        width: 100%;
       }
 
       &-category {
