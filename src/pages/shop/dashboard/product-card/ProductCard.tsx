@@ -13,16 +13,12 @@ interface IProps {
   handleReload?: () => void;
 }
 
-const ProductCard = ({ product, loading, handleReload }: IProps) => {
+const ProductCard = ({ product }: IProps) => {
   const navigate = useNavigate();
   const { setOpen, setCart, cart } = useContext(CartContext);
 
   const handleNavigateProductDetailsPage = () => {
-
-    console.log(`${RoutePath.PRODUCTS}/${product.id}`)
-
     navigate(`${RoutePath.PRODUCTS}/${product.id}`, { replace: true });
-    handleReload?.();
   };
 
   const handleBuyNow = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {

@@ -127,7 +127,7 @@ const ProductDetail = () => {
       });
     }
     window.scrollTo(0, 0);
-  }, []);
+  }, [productId]);
 
   return (
     <div className="ProductDetail">
@@ -255,7 +255,7 @@ const ProductDetail = () => {
         <div className="ProductDetail__productRelated-mobile">
           {productsRelated.map((p) => (
             <div className="Product__list-item" key={p.id}>
-              <ProductCard product={p} handleReload={handleReloadPage} />
+              <ProductCard product={p} />
             </div>
           ))}
         </div>
@@ -271,7 +271,6 @@ const ProductDetail = () => {
               <div className="ProductDetail__productRelated-item">
                 <ProductCard
                   product={product}
-                  handleReload={handleReloadPage}
                 />
               </div>
             </SwiperSlide>
