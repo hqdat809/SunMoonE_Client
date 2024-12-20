@@ -255,7 +255,7 @@ const ProductDetail = () => {
         <div className="ProductDetail__productRelated-mobile">
           {productsRelated.map((p) => (
             <div className="Product__list-item" key={p.id}>
-              <ProductCard product={p} />
+              <ProductCard product={p} handleReload={handleReloadPage} />
             </div>
           ))}
         </div>

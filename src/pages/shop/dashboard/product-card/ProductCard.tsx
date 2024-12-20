@@ -18,6 +18,9 @@ const ProductCard = ({ product, loading, handleReload }: IProps) => {
   const { setOpen, setCart, cart } = useContext(CartContext);
 
   const handleNavigateProductDetailsPage = () => {
+
+    console.log(`${RoutePath.PRODUCTS}/${product.id}`)
+
     navigate(`${RoutePath.PRODUCTS}/${product.id}`, { replace: true });
     handleReload?.();
   };
