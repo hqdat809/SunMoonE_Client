@@ -68,8 +68,10 @@ const Navbar = () => {
   };
 
   const handleNavigateProfilePage = () => {
-    navigate(RoutePath.PROFILE);
     handleClose()
+    setTimeout(() => {
+      navigate(RoutePath.PROFILE);
+    }, 200)
   };
 
   const handleGetListOrder = async () => {
@@ -88,9 +90,12 @@ const Navbar = () => {
   }
 
   const handleNavigateMenu = (path: string) => {
-    navigate(path)
     setOpenDrawer(false)
+    setTimeout(() => {
+      navigate(path)
+    }, 500)
   }
+
   useEffect(() => {
     const details = localStorage.getItem("userDetails");
     if (details && details != undefined) {
@@ -100,15 +105,17 @@ const Navbar = () => {
     handleGetListOrder()
   }, []);
 
+
+
+
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
-
       <Divider />
       <List>
         {listRouteNavbar.map(({ label, path }, index) => (
           <ListItem key={label} disablePadding onClick={() => handleNavigateMenu(path)}>
             <ListItemButton>
-              <ListItemText primary={label} />
+              <ListItemText primary={label} sx={{ fontSize: 20 }} style={{ fontSize: 20 }} />
             </ListItemButton>
             <Divider />
           </ListItem>
