@@ -101,7 +101,7 @@ const RegisterForm = ({ setHasAccount }: IRegisterProps) => {
                 <Field
                   type="text"
                   name="firstName"
-                  label="Họ"
+                  label="Họ và tên đệm"
                   as={TextField}
                   error={
                     formikProps.errors.firstName &&
@@ -166,6 +166,17 @@ const RegisterForm = ({ setHasAccount }: IRegisterProps) => {
                 className="login-error-text"
               />
             </div>
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 8,
+              marginBottom: 20
+            }
+            }>
+              <span><span style={{ textDecoration: 'underline', fontWeight: 'bold' }}>Lưu ý:</span> bạn hãy đặt email theo dạng hovaten@gmail.com</span>
+              <span><span style={{ textDecoration: 'underline', fontWeight: 'bold' }}>Ví dụ:</span> hathithanhthuy@gmail.com</span>
+            </div>
+
             <div className="form-outline mb-3">
               <Field
                 type="password"
@@ -217,10 +228,11 @@ const RegisterForm = ({ setHasAccount }: IRegisterProps) => {
               >
                 Đăng Ký
               </LoadingButton>
-              <p className="small fw-bold mt-2 pt-1 mb-0 text-center">
+              <p className="large fw-bold mt-2 pt-1 mb-0 text-center">
                 Bạn đã có tài khoản?
                 <a
                   href="#!"
+                  style={{ marginLeft: 6 }}
                   className="link-danger"
                   onClick={() => setHasAccount(true)}
                 >

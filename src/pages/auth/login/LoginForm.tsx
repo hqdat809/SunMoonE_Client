@@ -97,10 +97,11 @@ const LoginForm = ({ setHasAccount, setAccessToken }: ILoginFormProps) => {
               >
                 Đăng Nhập
               </LoadingButton>
-              <p className="small fw-bold mt-2 pt-1 mb-0 text-center">
-                Bạn chưa có tài khoản?{" "}
+              <p className="large fw-bold pt-1 mb-0 text-center" style={{ marginTop: 20 }}>
+                Bạn chưa có tài khoản?
                 <a
                   href="#!"
+                  style={{ marginLeft: 6 }}
                   className="link-danger"
                   onClick={() => setHasAccount(false)}
                 >

@@ -30,6 +30,31 @@ export const createOrder = async (
     }
 };
 
+export const cancelOrder = async (
+    payload?: number,
+    cb?: () => void
+) => {
+    try {
+        const response: AxiosResponse<IKiotResponse<IProductResponse[]>> =
+            await axios.delete(`/kiot/orders/${payload}?IsVoidPayment=true`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem(
+                        EAuthToken.KIOT_TOKEN
+                    )}`,
+                    Retailer: "thanhthuy1988",
+                },
+            });
+
+        if (response.status === 200) {
+            cb?.();
+        }
+
+        return response.data;
+    } catch (error) {
+        console.error("Error:", error);
+    }
+};
+
 export const getListOrder = async (
     payload?: IOrderRequest,
     cb?: () => void
@@ -38,6 +63,34 @@ export const getListOrder = async (
         const params = new URLSearchParams(payload as Record<string, string>);
         const response: AxiosResponse<IKiotResponse<IOrder[]>> = await axios.get(
             `/kiot/orders?${params}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem(
+                        EAuthToken.KIOT_TOKEN
+                    )}`,
+                    Retailer: "thanhthuy1988",
+                },
+            }
+        );
+
+        if (response.status === 200) {
+            cb?.();
+        }
+
+        return response.data;
+    } catch (error) {
+        console.error("Error:", error);
+    }
+};
+
+
+export const getOrderDetails = async (
+    payload?: string,
+    cb?: () => void
+) => {
+    try {
+        const response: AxiosResponse<IOrder> = await axios.get(
+            `/kiot/orders/${payload}`,
             {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem(

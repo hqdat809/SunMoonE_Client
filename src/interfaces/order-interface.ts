@@ -42,6 +42,23 @@ export interface IOrder {
     orderDetails: IOrderDetails[];
     SaleChannelId?: number;
     SaleChannelName?: string;
+    orderDelivery: {
+        address: string;
+        contactNumber: string;
+        latestStatus: number;
+        partnerDelivery: {
+            code: string;
+            name: string;
+            contactNumber: string;
+            address: string;
+            email: string;
+        };
+        price: number;
+        receiver: string;
+        serviceType: string;
+        status: number;
+        wardName: string;
+    };
 }
 
 export interface IOrderDetails {
