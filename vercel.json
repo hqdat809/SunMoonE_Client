@@ -11,6 +11,13 @@
     {
       "source": "/token",
       "destination": "https://id.kiotviet.vn/connect/token"
-    }
+    },
+    { "source": "/dashboard", "destination": "/" },
+    { "source": "/order", "destination": "/" },
+    { "source": "/profile", "destination": "/" },
+    { "source": "/order-list", "destination": "/" },
+    { "source": "/products", "destination": "/" },
+    { "source": "/products/:productId", "destination": "/" },
+    { "source": "/(.*)", "destination": "/" }
   ]
 }
