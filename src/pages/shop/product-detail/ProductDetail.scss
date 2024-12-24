@@ -231,7 +231,7 @@
       &-mobile {
         grid-template-columns: repeat(2, 1fr);
         gap: 8px;
-        display: grid;
+        display: grid !important;
       }
 
       &-label {

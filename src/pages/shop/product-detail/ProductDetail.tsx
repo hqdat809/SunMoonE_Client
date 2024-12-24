@@ -252,7 +252,7 @@ const ProductDetail = () => {
           Sản phẩm liên quan:
         </div>
 
-        <div className="ProductDetail__productRelated-mobile">
+        <div className="ProductDetail__productRelated-mobile" style={{ display: "none" }}>
           {productsRelated.map((p) => (
             <div className="Product__list-item" key={p.id}>
               <ProductCard product={p} />
@@ -262,7 +262,7 @@ const ProductDetail = () => {
         <Swiper
           modules={[Navigation, Pagination, Scrollbar, A11y]}
           spaceBetween={1.2}
-          slidesPerView={2}
+          slidesPerView={4.5}
           scrollbar={{ draggable: true }}
           className="ProductDetail__productRelated-swiper"
         >
