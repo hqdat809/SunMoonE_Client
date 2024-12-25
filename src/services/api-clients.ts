@@ -6,7 +6,7 @@ import { toastError } from "../utils/notifications-utils";
 
 const instance = axios.create({
   // baseURL: "https://public.kiotapi.com", // Replace with your API URL
-  baseURL: import.meta.env.VITE_API_URL, // Replace with your API URL
+  baseURL: import.meta.env.VITE_API_URL,  // Replace with your API URL
   timeout: 100000, // Set request timeout (optional)
   headers: {
     "Content-Type": "application/json",
