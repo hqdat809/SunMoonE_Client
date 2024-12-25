@@ -1,5 +1,11 @@
 {
   "rewrites": [
+    { "source": "/dashboard", "destination": "/" },
+    { "source": "/order", "destination": "/" },
+    { "source": "/profile", "destination": "/" },
+    { "source": "/order-list", "destination": "/" },
+    { "source": "/products", "destination": "/" },
+    { "source": "/products/:productId", "destination": "/" },
     {
       "source": "/api/v1/:path*",
       "destination": "http://103.179.191.149:8080/api/v1/:path*"
@@ -11,13 +17,6 @@
     {
       "source": "/token",
       "destination": "https://id.kiotviet.vn/connect/token"
-    },
-    { "source": "/dashboard", "destination": "/" },
-    { "source": "/order", "destination": "/" },
-    { "source": "/profile", "destination": "/" },
-    { "source": "/order-list", "destination": "/" },
-    { "source": "/products", "destination": "/" },
-    { "source": "/products/:productId", "destination": "/" },
-    { "source": "/(.*)", "destination": "/" }
+    }
   ]
 }
