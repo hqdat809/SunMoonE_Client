@@ -18,7 +18,7 @@ const ProductCard = ({ product }: IProps) => {
   const { setOpen, setCart, cart } = useContext(CartContext);
 
   const handleNavigateProductDetailsPage = () => {
-    navigate(`${RoutePath.PRODUCTS}/${product.id}`, { replace: true });
+    navigate(`${RoutePath.PRODUCTS}/${product.id}`);
   };
 
   const handleBuyNow = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
