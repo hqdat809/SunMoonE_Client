@@ -85,6 +85,7 @@ const ProductDetail = () => {
       orderBy: "createdDate",
       orderDirection: "DESC",
       categoryId: categoryId,
+      branchIds: import.meta.env.VITE_BRANCH_ID,
     }).then((response) => {
       if (response) {
         setProductsRelated(response?.data);

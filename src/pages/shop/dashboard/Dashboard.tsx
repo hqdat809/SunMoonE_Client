@@ -1,24 +1,20 @@
-import React, { useEffect, useState } from "react";
-import "./Dashboard.scss";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import GroupsIcon from "@mui/icons-material/Groups";
-import SpaIcon from "@mui/icons-material/Spa";
 import AllInclusiveIcon from "@mui/icons-material/AllInclusive";
-import { getTokenFromKiotViet } from "../../../services/auth-service";
-import leafImg from "../../../assets/images/logo-leaf-new.png";
-import { getProducts } from "../../../services/product-service";
-import { IProductResponse } from "../../../interfaces/product-interface";
-import { EAuthToken, TUserDetails } from "../../../interfaces/user-interfaces";
-import bigLeafImg from "../../../assets/images/basil-leaf.png";
-import {
-  getCollections,
-  getDetailCollection,
-} from "../../../services/collection-service";
-import { ICollections } from "../../../interfaces/collection-interface";
-import ListProduct from "./list-product/ListProduct";
+import GroupsIcon from "@mui/icons-material/Groups";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import SpaIcon from "@mui/icons-material/Spa";
+import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
+import { ICollections } from "../../../interfaces/collection-interface";
+import { IProductResponse } from "../../../interfaces/product-interface";
+import { TUserDetails } from "../../../interfaces/user-interfaces";
+import { getTokenFromKiotViet } from "../../../services/auth-service";
+import {
+  getDetailCollection
+} from "../../../services/collection-service";
 import { createCustomer } from "../../../services/customer-service";
 import { toastError } from "../../../utils/notifications-utils";
+import "./Dashboard.scss";
+import ListProduct from "./list-product/ListProduct";
 
 const incentives = [
   {

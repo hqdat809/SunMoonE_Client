@@ -62,6 +62,7 @@ const ListProduct = ({ categoryId, categoryName }: IProps) => {
       orderBy: "createdDate",
       orderDirection: "DESC",
       categoryId: categoryId,
+      branchIds: import.meta.env.VITE_BRANCH_ID,
     }).then((response) => {
       if (response) {
         setProducts(response?.data);
