@@ -3,9 +3,8 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import SpaIcon from "@mui/icons-material/Spa";
 import { useEffect, useState } from "react";
-import Cookies from "universal-cookie";
+import Slider from "react-slick";
 import { ICollections } from "../../../interfaces/collection-interface";
-import { IProductResponse } from "../../../interfaces/product-interface";
 import { TUserDetails } from "../../../interfaces/user-interfaces";
 import { getTokenFromKiotViet } from "../../../services/auth-service";
 import {
@@ -15,6 +14,8 @@ import { createCustomer } from "../../../services/customer-service";
 import { toastError } from "../../../utils/notifications-utils";
 import "./Dashboard.scss";
 import ListProduct from "./list-product/ListProduct";
+import bannerImage1 from "../../../assets/images/banner1.jpg"
+import bannerImage2 from "../../../assets/images/banner2.jpg"
 
 const incentives = [
   {
@@ -40,9 +41,7 @@ const incentives = [
 ];
 
 const Dashboard = () => {
-  const [products, setProducts] = useState<IProductResponse[]>([]);
   const [collections, setCollections] = useState<ICollections>();
-  const cookies = new Cookies();
 
   const handleGetKiotTokenAndProduct = async () => {
 
@@ -71,6 +70,17 @@ const Dashboard = () => {
 
   };
 
+  const settings = {
+    dots: true,
+    infinite: true,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    speed: 500,
+    autoplaySpeed: 2000,
+    cssEase: "linear"
+  };
+
   useEffect(() => {
     handleGetKiotTokenAndProduct();
   }, []);
@@ -78,7 +88,17 @@ const Dashboard = () => {
   return (
     <div className="Dashboard">
       <div className="Dashboard__slide">
-        <h1>Banner here</h1>
+        <Slider {...settings}>
+          <div className="Dashboard__slide-item" >
+            <img src="src\assets\images\banner1.jpg" alt="" />
+          </div>
+          <div className="Dashboard__slide-item" >
+            <img src="src\assets\images\banner1.jpg" alt="" />
+          </div>
+        </Slider>
+      </div>
+      <div className="Dashboard__banner" >
+        <img src="src\assets\images\banner2.jpg" alt="" />
       </div>
       <div className="Dashboard__incentives">
         {incentives.map((item, index) => (
