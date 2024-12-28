@@ -14,8 +14,8 @@ import { createCustomer } from "../../../services/customer-service";
 import { toastError } from "../../../utils/notifications-utils";
 import "./Dashboard.scss";
 import ListProduct from "./list-product/ListProduct";
-import bannerImage1 from "../../../assets/images/banner1.jpg"
-import bannerImage2 from "../../../assets/images/banner2.jpg"
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const incentives = [
   {
