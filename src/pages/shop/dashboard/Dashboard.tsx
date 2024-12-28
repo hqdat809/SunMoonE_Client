@@ -16,6 +16,8 @@ import "./Dashboard.scss";
 import ListProduct from "./list-product/ListProduct";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import imageBanner1 from "../../../assets/images/banner1.jpg"
+import imageBanner2 from "../../../assets/images/banner2.jpg"
 
 const incentives = [
   {
@@ -90,15 +92,15 @@ const Dashboard = () => {
       <div className="Dashboard__slide">
         <Slider {...settings}>
           <div className="Dashboard__slide-item" >
-            <img src="src\assets\images\banner1.jpg" alt="" />
+            <img src={imageBanner1} alt="" />
           </div>
           <div className="Dashboard__slide-item" >
-            <img src="src\assets\images\banner1.jpg" alt="" />
+            <img src={imageBanner1} alt="" />
           </div>
         </Slider>
       </div>
       <div className="Dashboard__banner" >
-        <img src="src\assets\images\banner2.jpg" alt="" />
+        <img src={imageBanner2} alt="" />
       </div>
       <div className="Dashboard__incentives">
         {incentives.map((item, index) => (
