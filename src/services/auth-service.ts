@@ -79,6 +79,7 @@ export const signIn = async (payload: TSignInRequest, cb?: () => void) => {
         orderDirection: "ASC",
         categoryId: import.meta.env.VITE_COLLECTION_USER_ID,
         currentItem: 0,
+        isActive: true,
         branchIds: import.meta.env.VITE_BRANCH_ID,
       }).then((res) => {
         localStorage.setItem("products", JSON.stringify(res?.data))
