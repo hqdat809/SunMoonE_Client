@@ -18,7 +18,6 @@ import ProductCard from "../dashboard/product-card/ProductCard";
 import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
 import * as RoutePath from "../../../routes/paths";
 import { CartContext } from "../../layouts/Layouts";
-
 interface IProps {
   productId: number;
 }
@@ -33,24 +32,24 @@ const ProductDetail = () => {
     []
   );
 
-  const descriptionElement = document.getElementById(
-    "ProductDetail__details-description"
-  );
-
-  const moreDescriptionElement = document.getElementById(
-    "ProductDetail__moreDetails-description"
-  );
-
   const [details, setDetails] = useState<IProductResponse>();
 
-  const handleClickMore = () => {
-    if (moreDescriptionElement?.getBoundingClientRect().y) {
-      window.scrollTo({
-        top: moreDescriptionElement?.getBoundingClientRect().y - 160,
-        behavior: "smooth",
-      });
+  const handleRenderDescription = (text?: string) => {
+    if (!text) {
+      return <></>
     }
-  };
+
+    const arr = text.split("<br/>")
+
+    return arr.map((item, index) => {
+      return (
+        <div key={index}>
+          <span>{item}</span>
+          <br />
+        </div>
+      );
+    });
+  }
 
 
   const handleBuyNow = () => {
@@ -114,8 +113,6 @@ const ProductDetail = () => {
   };
 
   useEffect(() => {
-    descriptionElement?.setHTMLUnsafe(details?.description || "");
-    moreDescriptionElement?.setHTMLUnsafe(details?.description || "");
     if (details?.categoryId) {
       handleGetProductsRelated(details?.categoryId);
     }
@@ -163,14 +160,14 @@ const ProductDetail = () => {
             className="ProductDetail__details-description"
             id="ProductDetail__details-description"
           >
-            {/* {details?.description} */}
+            {handleRenderDescription(details?.description)}
           </div>
+
           {details?.description && (
             <div
               className="ProductDetail__details-more"
-              onClick={handleClickMore}
             >
-              Xem thêm
+              Xem thêm ở dưới mô tả sản phẩm
             </div>
           )}
 
@@ -245,7 +242,9 @@ const ProductDetail = () => {
         <div
           className="ProductDetail__moreDetails-description"
           id="ProductDetail__moreDetails-description"
-        ></div>
+        >
+          {handleRenderDescription(details?.description)}
+        </div>
       </div>
 
       <div className="ProductDetail__productRelated">
