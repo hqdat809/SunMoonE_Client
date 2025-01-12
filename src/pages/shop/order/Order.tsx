@@ -4,7 +4,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { LoadingButton } from "@mui/lab";
 import * as Yup from "yup";
-import { Button, Divider, FormLabel, Input, InputBase, MenuItem, Select, styled, TextareaAutosize, TextField } from "@mui/material";
+import { Autocomplete, Button, createFilterOptions, Divider, FormLabel, Input, InputBase, MenuItem, Select, styled, TextareaAutosize, TextField } from "@mui/material";
 import * as provinceService from "../../../services/province-service";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -20,13 +20,21 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import QRCode from "../../../assets/images/QRCode.png";
 import DescriptionIcon from "@mui/icons-material/Description";
-import { createOrder } from "../../../services/order-service";
+import { createOrder, getAllLocations } from "../../../services/order-service";
 import { verifyEmail } from "../../../services/auth-service";
 import { toastError, toastSuccess } from "../../../utils/notifications-utils";
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import { PAYMENT_TYPE } from "../../../enum/OrderEnum";
 import { useNavigate } from "react-router-dom";
 import * as RoutePath from "../../../routes/paths";
+import { getUserAddress, updateUserAddress } from "../../../services/user-service";
+import { IUserAddress } from "../../../interfaces/user-interfaces";
+
+const filterOptions = createFilterOptions({
+  matchFrom: 'start',
+  stringify: (option: any) => option.name,
+});
+
 
 const Order = () => {
   const { cart, setCart } = useContext(CartContext);
@@ -35,30 +43,21 @@ const Order = () => {
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("Tên không được bỏ trống"),
     phoneNumber: Yup.string().required("Số điện thoại không được bỏ trống"),
-    province: Yup.string().required("Trường này không được bỏ trống"),
-    district: Yup.string().required("Trường này không được bỏ trống"),
-    ward: Yup.string().required("Trường này không được bỏ trống"),
     address: Yup.string().required("Trường này không được bỏ trống"),
+    wardName: Yup.string(),
   });
 
   const [formLocationValues, setFormLocationValues] = useState({
     name: "",
     phoneNumber: "",
-    province: "",
-    district: "",
-    ward: "",
     address: "",
+    wardName: ""
   });
   const [addressRecipient, setAddressRecipient] = useState<any>();
+  const [selectedLocation, setSelectedLocation] = useState<any>({ id: 0 });
 
-  const [provinceCode, setProvinceCode] = useState<number>();
-  const [districtCode, setDistrictCode] = useState<number>();
-
-  const [listProvince, setListProvince] = useState<any[]>([]);
-  const [listDistrict, setListDistrict] = useState<any[]>([]);
-  const [listWard, setListWard] = useState<any[]>([]);
   const [productInCart, setProductInCart] = useState<ICart[]>(cart);
-
+  const [location, setLocation] = useState<any[]>();
   const [note, setNote] = useState("");
 
 
@@ -70,36 +69,49 @@ const Order = () => {
     setProductInCart(cart)
   };
 
-  const handleGetProvices = () => {
-    provinceService.getProvinces().then((res) => {
-      setListProvince(res);
-    });
-  };
+  const handleGetAllLocations = async () => {
+    await getAllLocations().then((res) => {
+      console.log("res: ", res)
+      setLocation(res)
+    })
+  }
+
+  const handleGetUserAddress = async () => {
+    try {
+      const userDetails = JSON.parse(localStorage.getItem('userDetails') || '')
+      const res = await getUserAddress(userDetails.id)
+      console.log(res.data)
+      if (res.data.id) {
+        const { location, id, ...userAddress } = res.data
+        const addRecipient = { ...userAddress, selectedLocation: JSON.parse(location) };
+        setFormLocationValues(userAddress)
+        setAddressRecipient(addRecipient)
+        setSelectedLocation(JSON.parse(location))
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   useEffect(() => {
-    handleGetProvices();
+    handleGetAllLocations()
+    handleGetUserAddress()
   }, []);
 
-  const handleSubmitUserInfo = (values: any) => {
-    const addRecipient = { ...values };
-    setFormLocationValues(values);
-    if (values.province) {
-      const provinceName = listProvince.find(
-        (province) => province.code === values.province
-      )?.name;
-      addRecipient.province = provinceName;
+  const handleSubmitUserInfo = async (values: any) => {
+
+    try {
+      console.log({ ...values, location: JSON.stringify(selectedLocation) })
+      const userDetails = JSON.parse(localStorage.getItem('userDetails') || '')
+
+      const addRecipient = { ...values, selectedLocation };
+      await updateUserAddress(userDetails.id, { ...values, location: JSON.stringify(selectedLocation) })
+      setFormLocationValues(values);
+      setAddressRecipient(addRecipient);
+    } catch (error) {
+      console.error(error);
     }
-    if (values.district) {
-      const districtName = listDistrict.find(
-        (district) => district.code === values.district
-      )?.name;
-      addRecipient.district = districtName;
-    }
-    if (values.ward) {
-      const wardName = listWard.find((ward) => ward.code === values.ward)?.name;
-      addRecipient.ward = wardName;
-    }
-    setAddressRecipient(addRecipient);
+
   };
 
   const handleEditLocation = () => {
@@ -128,11 +140,20 @@ const Order = () => {
     return totalPrice.toLocaleString("vi-VN");
   }, [productInCart]);
 
+  const handleGetTotalPriceNotShip = useCallback(() => {
+    let totalPrice = 0;
+    cart.forEach((item) => {
+      totalPrice += item.details.basePrice * item.count;
+    });
+    return totalPrice.toLocaleString("vi-VN");
+  }, [cart]);
+
   const handleGetTotalPriceInCart = useCallback(() => {
     let totalPrice = 0;
     cart.forEach((item) => {
       totalPrice += item.details.basePrice * item.count;
     });
+    totalPrice += 30000
     return totalPrice.toLocaleString("vi-VN");
   }, [cart]);
 
@@ -167,66 +188,72 @@ const Order = () => {
 
 
   const handleCreateOrder = async () => {
-    const orderDetails = cart.map(product => {
-      return {
-        productId: product.details.id,
-        quantity: product.count,
-        productName: product.details.name,
-        price: product.details.basePrice,
-        discount: 0,
-        discountRatio: 0,
-        viewDiscount: 0.0000
+    try {
+      const orderDetails = cart.map(product => {
+        return {
+          productId: product.details.id,
+          quantity: product.count,
+          productName: product.details.name,
+          price: product.details.basePrice,
+          discount: 0,
+          discountRatio: 0,
+          viewDiscount: 0.0000
+        }
+      })
+
+      if (!addressRecipient) {
+        toastError("Vui lòng lưu thông tin liên lạc")
+        return
       }
-    })
 
-    if (!addressRecipient) {
-      toastError("Vui lòng lưu thông tin liên lạc")
-      return
+      let description = '';
+
+      switch (payment) {
+        case (PAYMENT_TYPE.COD):
+          description = "COD"
+          break;
+        case (PAYMENT_TYPE.BANKING):
+          description = "BANKING"
+          break;
+        case (PAYMENT_TYPE.COLLECTOR):
+          description = "Thu hộ " + handleGetTotalPriceCollector() + "đ"
+          break;
+      }
+
+      const userDetails = JSON.parse(localStorage.getItem("userDetails") || "")
+
+      const address = `${addressRecipient.selectedLocation.name} - ${addressRecipient.address}`;
+      const customerDetails = {
+        id: userDetails.customerId,
+      }
+
+      const orderDelivery = {
+        receiver: addressRecipient.name,
+        address: address,
+        contactNumber: addressRecipient.phoneNumber,
+        wardName: addressRecipient.wardName,
+        locationId: addressRecipient.selectedLocation.id,
+        locationName: addressRecipient.selectedLocation.name,
+        price: parseInt(handleGetTotalPriceInCart())
+      }
+
+      const newOrder = {
+        description: description + '\n' + note,
+        saleChannelId: 1000003992,
+        branchId: 286368,
+        orderDetails,
+        orderDelivery,
+        customer: customerDetails
+      }
+
+      await createOrder(newOrder)
+      toastSuccess("Đã tạo đơn hàng thành công", "Thành công")
+      navigate(RoutePath.ORDER_LIST);
+      setCart([])
+    } catch (error: any) {
+      toastError(error.message)
     }
 
-    let description = '';
-
-    switch (payment) {
-      case (PAYMENT_TYPE.COD):
-        description = "COD"
-        break;
-      case (PAYMENT_TYPE.BANKING):
-        description = "BANKING"
-        break;
-      case (PAYMENT_TYPE.COLLECTOR):
-        description = "Thu hộ " + handleGetTotalPriceCollector() + "đ"
-        break;
-    }
-
-    const userDetails = JSON.parse(localStorage.getItem("userDetails") || "")
-
-    const address = `${addressRecipient.address}, ${addressRecipient.ward}, ${addressRecipient.district}, ${addressRecipient.province}`;
-    const customerDetails = {
-      id: userDetails.customerId,
-    }
-
-    const orderDelivery = {
-      receiver: addressRecipient.name,
-      address: address,
-      contactNumber: addressRecipient.phoneNumber,
-      wardName: addressRecipient.ward,
-      price: parseInt(handleGetTotalPriceInCart())
-    }
-
-    const newOrder = {
-      description: description + '\n' + note,
-      saleChannelId: 1000003992,
-      branchId: 286368,
-      orderDetails,
-      orderDelivery,
-      customer: customerDetails
-    }
-
-    await createOrder(newOrder)
-
-    toastSuccess("Đã tạo đơn hàng thành công", "Thành công")
-    navigate(RoutePath.ORDER_LIST);
-    setCart([])
   }
 
   useEffect(() => {
@@ -297,95 +324,21 @@ const Order = () => {
                         helperText={touched.phoneNumber && errors.phoneNumber}
                       />
                     </div>
+
                     <div className="form-outline mb-4 Form__row">
-                      <Field
-                        type="email"
-                        name="province"
-                        as={TextField}
-                        id="form3Example3"
-                        label="Tỉnh / Thành phố (*)"
-                        value={provinceCode}
-                        onChange={(e: React.ChangeEvent<any>) => {
-                          handleChange(e);
-                          setFieldValue("district", "");
-                          setFieldValue("ward", "");
-                          setDistrictCode(undefined);
-                          setProvinceCode(e.target.value)
-                          setListDistrict(listProvince.find(d => d.code === e.target.value).districts)
-                        }}
-                        onBlur={handleBlur}
-                        size="small"
-                        select
-                        className={`form-control form-control-lg  ${errors.province &&
-                          touched.province &&
+                      <Autocomplete
+                        options={location || []}
+                        getOptionLabel={(option) => option.name}
+                        filterOptions={filterOptions}
+                        fullWidth
+                        value={selectedLocation?.id === 0 ? null : selectedLocation}
+                        className={` ${!selectedLocation &&
                           "Form__error-field"
                           }`}
-                        helperText={touched.province && errors.province}
-                      >
-                        {listProvince?.map((province) => (
-                          <MenuItem value={province.code}>
-                            {province.name}
-                          </MenuItem>
-                        ))}
-                      </Field>
-                      <Field
-                        type="text"
-                        name="district"
-                        as={TextField}
-                        select
-                        id="form3Example3"
-                        label="Quận / Huyện (*)"
-                        value={districtCode}
-                        onChange={(e: React.ChangeEvent<any>) => {
-                          handleChange(e)
-                          setFieldValue("ward", "");
-                          setDistrictCode(e.target.value);
-                          setListWard(listDistrict.find(d => d.code === e.target.value).wards);
-                        }}
-                        onBlur={handleBlur}
-                        disabled={!provinceCode}
-                        size="small"
-                        className={`form-control form-control-lg  ${errors.district &&
-                          touched.district &&
-                          "Form__error-field"
-                          }`}
-                        helperText={touched.district && errors.district}
-                      >
-                        {listDistrict?.map((province) => (
-                          <MenuItem value={province.code}>
-                            {province.name}
-                          </MenuItem>
-                        ))}
-                      </Field>
-                    </div>
-                    <div className="form-outline mb-4 Form__row">
-                      <Field
-                        type="email"
-                        name="ward"
-                        as={TextField}
-                        select
-                        id="form3Example3"
-                        label="Xã / Phường (*)"
-                        value={values.ward}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        disabled={!districtCode}
-                        size="small"
-                        className={`form-control form-control-lg  ${errors.ward &&
-                          touched.ward &&
-                          values.district &&
-                          "Form__error-field"
-                          }`}
-                        helperText={
-                          values.district && touched.ward && errors.ward
-                        }
-                      >
-                        {listWard?.map((province) => (
-                          <MenuItem value={province.code}>
-                            {province.name}
-                          </MenuItem>
-                        ))}
-                      </Field>
+
+                        onChange={(e, value) => setSelectedLocation(value)}
+                        renderInput={(params) => <TextField {...params} label="Chọn tỉnh thành" size="small" fullWidth helperText={selectedLocation === null && "Trường này không được bỏ trống"} />}
+                      />
                       <Field
                         type="text"
                         name="address"
@@ -401,6 +354,21 @@ const Order = () => {
                           "Form__error-field"
                           }`}
                         helperText={touched.address && errors.address}
+                      />
+                    </div>
+                    <div className="form-outline mb-4 Form__row">
+                      <Field
+                        type="text"
+                        name="wardName"
+                        as={TextField}
+                        id="form3Example3"
+                        label="Tên phường/xã"
+                        value={values.wardName}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        size="small"
+                        className={`form-control form-control-lg `}
+                        helperText={'Tên phường/xã phải theo định dạng "Phường/Xã + (Tên Phường/Xã)", ví dụ: Phường Quang Trung / Hoặc nhập phường xã ở phần ghi chú'}
                       />
                     </div>
                     <div className="text-center text-lg-start pt-2 login-actions Form__buttons-save Form__buttons-primary">
@@ -448,23 +416,15 @@ const Order = () => {
                     Tỉnh / Thành phố:
                   </div>
                   <div className="Order__userRecipient-info-values">
-                    {addressRecipient?.province}
+                    {addressRecipient?.selectedLocation.name}
                   </div>
                 </div>
                 <div className="Order__userRecipient-info-item">
                   <div className="Order__userRecipient-info-label">
-                    Quận / Huyện:
+                    Phường/xã:
                   </div>
                   <div className="Order__userRecipient-info-values">
-                    {addressRecipient?.district}
-                  </div>
-                </div>
-                <div className="Order__userRecipient-info-item">
-                  <div className="Order__userRecipient-info-label">
-                    Phường / Xã:
-                  </div>
-                  <div className="Order__userRecipient-info-values">
-                    {addressRecipient?.ward}
+                    {addressRecipient?.wardName}
                   </div>
                 </div>
                 <div className="Order__userRecipient-info-item">
@@ -763,12 +723,14 @@ const Order = () => {
           <div className="Order__bill-item">
             <div className="Order__bill-label">Tổng cộng: </div>
             <div className="Order__bill-value">
-              {handleGetTotalPriceInCart()}đ
+              {handleGetTotalPriceNotShip()}đ
             </div>
           </div>
           <div className="Order__bill-item">
             <div className="Order__bill-label">Phí vận chuyển: </div>
-            <div className="Order__bill-value">Chưa tính</div>
+            <div className="Order__bill-value">
+              30.000đ
+            </div>
           </div>
           <div className="Order__bill-item">
             <div className="Order__bill-label">Tổng thanh toán: </div>

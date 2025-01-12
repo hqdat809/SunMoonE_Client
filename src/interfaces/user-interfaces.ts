@@ -51,6 +51,16 @@ export interface IUserBank {
 }
 
 
+export interface IUserAddress {
+  id: string;
+  name: string;
+  phoneNumber: string;
+  address: string;
+  wardName: string;
+  location: string
+}
+
+
 
 export interface TAuthority {
   authority: string;
@@ -131,7 +141,7 @@ export interface INotification {
 export enum EUserTypeCategory {
   USER = "USER",
   ADMIN = "ADMIN",
-  CUSTOMER = "CUSTOMER",
+  CUSTOMER = "Customer",
   CTV1 = "CTV1",
   CTV2 = "CTV2",
   CTV3 = "CTV3",

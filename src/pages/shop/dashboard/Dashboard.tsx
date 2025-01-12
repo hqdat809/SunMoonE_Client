@@ -53,8 +53,6 @@ const Dashboard = () => {
 
       const userDetails: TUserDetails = JSON.parse(localStorage.getItem('userDetails') || "")
 
-      console.log(userDetails)
-
       if (!userDetails.customerId) {
         const createdCustomerResponse = await createCustomer()
       }
@@ -90,14 +88,9 @@ const Dashboard = () => {
   return (
     <div className="Dashboard">
       <div className="Dashboard__slide">
-        <Slider {...settings}>
-          <div className="Dashboard__slide-item" >
-            <img src={imageBanner1} alt="" />
-          </div>
-          <div className="Dashboard__slide-item" >
-            <img src={imageBanner1} alt="" />
-          </div>
-        </Slider>
+        <div className="Dashboard__slide-item" >
+          <img src={imageBanner1} alt="" />
+        </div>
       </div>
       <div className="Dashboard__banner" >
         <img src={imageBanner2} alt="" />

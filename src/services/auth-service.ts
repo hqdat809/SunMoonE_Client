@@ -25,7 +25,6 @@ export const signIn = async (payload: TSignInRequest, cb?: () => void) => {
     if (response.status === 200) {
       saveStorageToken(response.data.token);
 
-      console.log("login: ", response.data.userDetails)
       localStorage.setItem(
         "userDetails",
         JSON.stringify(response.data.userDetails)

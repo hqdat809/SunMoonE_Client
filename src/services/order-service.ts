@@ -25,8 +25,8 @@ export const createOrder = async (
         }
 
         return response.data;
-    } catch (error) {
-        console.error("Error:", error);
+    } catch (error: any) {
+        throw new Error(error.response.data.responseStatus.message)
     }
 };
 
@@ -110,3 +110,41 @@ export const getOrderDetails = async (
         console.error("Error:", error);
     }
 };
+
+export const getAllLocations = async () => {
+    try {
+
+        const totalItems = 800; // Tổng số item
+        const itemsPerPage = 200; // Số item mỗi lần gọi API
+        const totalPages = Math.ceil(totalItems / itemsPerPage); // Tổng số lần gọi API
+
+        // Tạo danh sách các promise cho từng lần gọi API
+        const requests = Array.from({ length: totalPages }, async (_, i) => {
+            const offset = i * itemsPerPage;
+            return axios.get(
+                `/kiot/locations?pageSize=${itemsPerPage}&currentItem=${offset}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            EAuthToken.KIOT_TOKEN
+                        )}`,
+                        Retailer: "thanhthuy1988",
+                    },
+                }
+            )
+        });
+
+        // Thực hiện tất cả các promise
+        const results = await Promise.all(requests);
+
+        // Lấy kết quả từ tất cả các promise
+        const locations = results.flatMap((response) => response.data.data);
+
+        console.log("locations: ", locations);
+
+        // Gộp kết quả từ tất cả các promise
+        return locations;
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}

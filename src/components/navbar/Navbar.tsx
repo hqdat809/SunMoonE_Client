@@ -18,6 +18,7 @@ import { CartContext } from "../../pages/layouts/Layouts";
 import * as RoutePath from "../../routes/paths";
 import { getListOrder } from "../../services/order-service";
 import "./Navbar.scss";
+import { ChangePasswordDialog } from './ChangePasswordDialog';
 
 const listRouteNavbar = [
   { label: "Trang chủ", path: RoutePath.DASHBOARD },
@@ -32,6 +33,8 @@ const Navbar = () => {
 
   const { setOpen, cart } = useContext(CartContext);
   const [orderNumber, setOrderNumber] = useState(0);
+  const [openDialogChangePassword, setOpenDialogChangePassword] = useState(false);
+
 
   const [openDrawer, setOpenDrawer] = useState(false);
 
@@ -47,20 +50,16 @@ const Navbar = () => {
     setOpenDrawer(newOpen);
   };
 
-  const handleNavigateLoginPage = () => {
-    navigate(RoutePath.AUTH);
-  };
-
-  const handleNavigateRegisterPage = () => {
-    navigate(RoutePath.AUTH, { state: "REGISTER" });
-  };
-
   const handleLogout = () => {
     localStorage.removeItem(EAuthToken.ACCESS_TOKEN)
     localStorage.removeItem(EAuthToken.KIOT_TOKEN)
     localStorage.removeItem(EAuthToken.REFRESH_TOKEN)
     navigate(RoutePath.AUTH);
     handleClose()
+  }
+
+  const handleChangePassword = () => {
+    setOpenDialogChangePassword(true)
   }
 
   const handleClose = () => {
@@ -209,14 +208,21 @@ const Navbar = () => {
             <ListItemIcon>
               <AccountCircleIcon fontSize="medium" />
             </ListItemIcon>
-            <ListItemText>Profile</ListItemText>
+            <ListItemText>Hồ Sơ</ListItemText>
+          </MenuItem>
+          <Divider />
+          <MenuItem onClick={handleChangePassword}>
+            <ListItemIcon>
+              <AccountCircleIcon fontSize="medium" />
+            </ListItemIcon>
+            <ListItemText >Đổi mật khẩu</ListItemText>
           </MenuItem>
           <Divider />
           <MenuItem onClick={handleLogout}>
             <ListItemIcon>
               <LogoutIcon fontSize="medium" />
             </ListItemIcon>
-            <ListItemText >Logout</ListItemText>
+            <ListItemText >Đăng Xuất</ListItemText>
           </MenuItem>
         </Menu>
       </div>
@@ -224,6 +230,11 @@ const Navbar = () => {
       <Drawer open={openDrawer} onClose={toggleDrawer(false)}>
         {DrawerList}
       </Drawer>
+
+      <ChangePasswordDialog
+        open={openDialogChangePassword}
+        onClose={() => setOpenDialogChangePassword(false)}
+      />
     </div>
   );
 };

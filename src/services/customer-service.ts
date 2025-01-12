@@ -16,7 +16,7 @@ export const createCustomer = async () => {
         name: `${userDetails.firstName} ${userDetails.lastName}`,
         email: userDetails.email,
         phone: userDetails.phone,
-        branchId: 1000000900
+        branchId: 286368
     }
 
 
