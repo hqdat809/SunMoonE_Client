@@ -29,8 +29,6 @@ const OrderListPage = () => {
             customerIds: [Number(userDetails.customerId)]
         }
         const res = await getListOrder(orderRequest)
-        console.log(res?.data)
-
         if (res) setOrders(res.data)
     }
 
@@ -91,7 +89,7 @@ const OrderListPage = () => {
                                 Địa chỉ:
                             </span>
                             <span>
-                                {"  "}{order.orderDelivery?.address}
+                                {" "}{`${order.orderDelivery?.locationName} - ${order.orderDelivery?.wardName} - ${order.orderDelivery?.address}`}
                             </span>
                         </div>
                         <div className="OrderListPage__details-description">

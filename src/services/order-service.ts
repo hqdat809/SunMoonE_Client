@@ -140,8 +140,6 @@ export const getAllLocations = async () => {
         // Lấy kết quả từ tất cả các promise
         const locations = results.flatMap((response) => response.data.data);
 
-        console.log("locations: ", locations);
-
         // Gộp kết quả từ tất cả các promise
         return locations;
     } catch (error) {

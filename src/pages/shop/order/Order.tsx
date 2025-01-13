@@ -55,6 +55,11 @@ const Order = () => {
   });
   const [addressRecipient, setAddressRecipient] = useState<any>();
   const [selectedLocation, setSelectedLocation] = useState<any>({ id: 0 });
+  const [provinceData, setProvinceData] = useState<any>();
+  const [wards, setWards] = useState<any[]>([]);
+  const [selectedWard, setSelectedWard] = useState<any>();
+
+
 
   const [productInCart, setProductInCart] = useState<ICart[]>(cart);
   const [location, setLocation] = useState<any[]>();
@@ -71,7 +76,6 @@ const Order = () => {
 
   const handleGetAllLocations = async () => {
     await getAllLocations().then((res) => {
-      console.log("res: ", res)
       setLocation(res)
     })
   }
@@ -80,13 +84,19 @@ const Order = () => {
     try {
       const userDetails = JSON.parse(localStorage.getItem('userDetails') || '')
       const res = await getUserAddress(userDetails.id)
-      console.log(res.data)
       if (res.data.id) {
         const { location, id, ...userAddress } = res.data
         const addRecipient = { ...userAddress, selectedLocation: JSON.parse(location) };
         setFormLocationValues(userAddress)
         setAddressRecipient(addRecipient)
-        setSelectedLocation(JSON.parse(location))
+        handleSelectLocation(addRecipient.selectedLocation)
+
+        const wardData = await handleGetWards(addRecipient.selectedLocation.name)
+
+        const ward = wardData.filter((w: any) => w.name === addRecipient.wardName)
+
+        setSelectedWard(ward[0])
+
       }
     } catch (error) {
       console.error(error);
@@ -94,6 +104,7 @@ const Order = () => {
   }
 
   useEffect(() => {
+    handleGetProvinceData()
     handleGetAllLocations()
     handleGetUserAddress()
   }, []);
@@ -101,7 +112,7 @@ const Order = () => {
   const handleSubmitUserInfo = async (values: any) => {
 
     try {
-      console.log({ ...values, location: JSON.stringify(selectedLocation) })
+      values.wardName = selectedWard.name
       const userDetails = JSON.parse(localStorage.getItem('userDetails') || '')
 
       const addRecipient = { ...values, selectedLocation };
@@ -148,6 +159,56 @@ const Order = () => {
     return totalPrice.toLocaleString("vi-VN");
   }, [cart]);
 
+  const handleGetWards = async (str: string) => {
+    // Tách chuỗi để lấy tên tỉnh/thành phố và quận/huyện
+    const parts = str.split(" - ");
+    let provinceName, districtName;
+
+    if (parts.length === 2) {
+      // Trường hợp chuỗi có hai phần (ví dụ: "Hà Nội - Quận Ba Đình")
+      provinceName = parts[0].trim();
+      districtName = parts[1].trim();
+    } else if (parts.length === 3) {
+      // Trường hợp chuỗi có ba phần (ví dụ: "Bà Rịa - Vũng Tàu - Huyện X")
+      provinceName = parts[0].trim() + " - " + parts[1].trim();
+      districtName = parts[2].trim();
+    } else {
+      // Trường hợp không hợp lệ
+      console.error("Invalid input format");
+      return [];
+    }
+
+
+    let provinces = provinceData;
+
+    if (!provinces) {
+      provinces = await provinceService.getProvinces()
+    }
+
+
+    // Duyệt qua data để tìm đúng tỉnh/thành phố và quận/huyện
+    let wards = [];
+    for (const province of provinces) {
+      if (province.name.endsWith(provinceName)) {
+        for (const district of province.districts) {
+          if (district.name.endsWith(districtName)) {
+            setWards(district.wards)
+            wards = district.wards;
+            break;
+          }
+        }
+      }
+    }
+
+    return wards
+  }
+
+  const handleSelectLocation = async (value: any) => {
+    setSelectedLocation(value)
+    handleGetWards(value.name)
+    setSelectedWard(null)
+  }
+
   const handleGetTotalPriceInCart = useCallback(() => {
     let totalPrice = 0;
     cart.forEach((item) => {
@@ -174,6 +235,11 @@ const Order = () => {
   const handleChangeNote = (e: any) => {
     setNote(e.target.value);
   }
+
+  useEffect(() => {
+    console.log(selectedWard)
+  }, [selectedWard]);
+
 
   const handleChangePrice = (e: any, cartDetail: ICart) => {
     const newCarts = productInCart.map(c => {
@@ -222,7 +288,7 @@ const Order = () => {
 
       const userDetails = JSON.parse(localStorage.getItem("userDetails") || "")
 
-      const address = `${addressRecipient.selectedLocation.name} - ${addressRecipient.address}`;
+      const address = `${addressRecipient.address}`;
       const customerDetails = {
         id: userDetails.customerId,
       }
@@ -259,6 +325,13 @@ const Order = () => {
   useEffect(() => {
     setProductInCart(cart);
   }, [cart]);
+
+  const handleGetProvinceData = async () => {
+    const provinceData = await provinceService.getProvinces()
+    setProvinceData(provinceData)
+  }
+
+
 
 
   return (
@@ -336,8 +409,22 @@ const Order = () => {
                           "Form__error-field"
                           }`}
 
-                        onChange={(e, value) => setSelectedLocation(value)}
+                        onChange={(e, value) => handleSelectLocation(value)}
                         renderInput={(params) => <TextField {...params} label="Chọn tỉnh thành" size="small" fullWidth helperText={selectedLocation === null && "Trường này không được bỏ trống"} />}
+                      />
+
+                      <Autocomplete
+                        options={wards || []}
+                        getOptionLabel={(option) => option.name}
+                        filterOptions={filterOptions}
+                        fullWidth
+                        value={selectedWard}
+                        className={` ${!setSelectedWard &&
+                          "Form__error-field"
+                          }`}
+
+                        onChange={(e, value) => setSelectedWard(value)}
+                        renderInput={(params) => <TextField {...params} label="Chọn phường xã" size="small" fullWidth />}
                       />
                       <Field
                         type="text"
@@ -354,21 +441,6 @@ const Order = () => {
                           "Form__error-field"
                           }`}
                         helperText={touched.address && errors.address}
-                      />
-                    </div>
-                    <div className="form-outline mb-4 Form__row">
-                      <Field
-                        type="text"
-                        name="wardName"
-                        as={TextField}
-                        id="form3Example3"
-                        label="Tên phường/xã"
-                        value={values.wardName}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        size="small"
-                        className={`form-control form-control-lg `}
-                        helperText={'Tên phường/xã phải theo định dạng "Phường/Xã + (Tên Phường/Xã)", ví dụ: Phường Quang Trung / Hoặc nhập phường xã ở phần ghi chú'}
                       />
                     </div>
                     <div className="text-center text-lg-start pt-2 login-actions Form__buttons-save Form__buttons-primary">

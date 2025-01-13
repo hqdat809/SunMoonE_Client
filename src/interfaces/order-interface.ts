@@ -46,6 +46,7 @@ export interface IOrder {
         address: string;
         contactNumber: string;
         latestStatus: number;
+        locationName: string;
         partnerDelivery: {
             code: string;
             name: string;
