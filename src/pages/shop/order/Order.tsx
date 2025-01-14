@@ -32,7 +32,7 @@ import { IUserAddress } from "../../../interfaces/user-interfaces";
 
 const filterOptions = createFilterOptions({
   matchFrom: 'start',
-  stringify: (option: any) => option.name,
+  stringify: (option: any) => option?.name,
 });
 
 
@@ -91,9 +91,9 @@ const Order = () => {
         setAddressRecipient(addRecipient)
         handleSelectLocation(addRecipient.selectedLocation)
 
-        const wardData = await handleGetWards(addRecipient.selectedLocation.name)
+        const wardData = await handleGetWards(addRecipient?.selectedLocation?.name)
 
-        const ward = wardData.filter((w: any) => w.name === addRecipient.wardName)
+        const ward = wardData.filter((w: any) => w?.name === addRecipient.wardName)
 
         setSelectedWard(ward[0])
 
@@ -112,7 +112,7 @@ const Order = () => {
   const handleSubmitUserInfo = async (values: any) => {
 
     try {
-      values.wardName = selectedWard.name
+      values.wardName = selectedWard?.name
       const userDetails = JSON.parse(localStorage.getItem('userDetails') || '')
 
       const addRecipient = { ...values, selectedLocation };
@@ -189,9 +189,9 @@ const Order = () => {
     // Duyệt qua data để tìm đúng tỉnh/thành phố và quận/huyện
     let wards = [];
     for (const province of provinces) {
-      if (province.name.endsWith(provinceName)) {
+      if (province?.name.endsWith(provinceName)) {
         for (const district of province.districts) {
-          if (district.name.endsWith(districtName)) {
+          if (district?.name.endsWith(districtName)) {
             setWards(district.wards)
             wards = district.wards;
             break;
@@ -205,7 +205,7 @@ const Order = () => {
 
   const handleSelectLocation = async (value: any) => {
     setSelectedLocation(value)
-    handleGetWards(value.name)
+    handleGetWards(value?.name)
     setSelectedWard(null)
   }
 
@@ -259,7 +259,7 @@ const Order = () => {
         return {
           productId: product.details.id,
           quantity: product.count,
-          productName: product.details.name,
+          productName: product.details?.name,
           price: product.details.basePrice,
           discount: 0,
           discountRatio: 0,
@@ -294,12 +294,12 @@ const Order = () => {
       }
 
       const orderDelivery = {
-        receiver: addressRecipient.name,
+        receiver: addressRecipient?.name,
         address: address,
         contactNumber: addressRecipient.phoneNumber,
         wardName: addressRecipient.wardName,
         locationId: addressRecipient.selectedLocation.id,
-        locationName: addressRecipient.selectedLocation.name,
+        locationName: addressRecipient.selectedLocation?.name,
         price: parseInt(handleGetTotalPriceInCart())
       }
 
@@ -372,13 +372,13 @@ const Order = () => {
                         as={TextField}
                         id="form3Example3"
                         label="Họ và tên (*)"
-                        value={values.name}
+                        value={values?.name}
                         onChange={handleChange}
                         onBlur={handleBlur}
                         size="small"
-                        className={`form-control form-control-lg  ${errors.name && touched.name && "Form__error-field"
+                        className={`form-control form-control-lg  ${errors?.name && touched?.name && "Form__error-field"
                           }`}
-                        helperText={touched.name && errors.name}
+                        helperText={touched?.name && errors?.name}
                       />
                       <Field
                         type="text"
@@ -401,7 +401,7 @@ const Order = () => {
                     <div className="form-outline mb-4 Form__row">
                       <Autocomplete
                         options={location || []}
-                        getOptionLabel={(option) => option.name}
+                        getOptionLabel={(option) => option?.name}
                         filterOptions={filterOptions}
                         fullWidth
                         value={selectedLocation?.id === 0 ? null : selectedLocation}
@@ -415,7 +415,7 @@ const Order = () => {
 
                       <Autocomplete
                         options={wards || []}
-                        getOptionLabel={(option) => option.name}
+                        getOptionLabel={(option) => option?.name}
                         filterOptions={filterOptions}
                         fullWidth
                         value={selectedWard}
@@ -488,7 +488,7 @@ const Order = () => {
                     Tỉnh / Thành phố:
                   </div>
                   <div className="Order__userRecipient-info-values">
-                    {addressRecipient?.selectedLocation.name}
+                    {addressRecipient?.selectedLocation?.name}
                   </div>
                 </div>
                 <div className="Order__userRecipient-info-item">
