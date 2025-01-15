@@ -103,14 +103,6 @@ export const register = async (
   cbe?: FormikHelpers<any>
 ) => {
   try {
-
-    const customerData = {
-      name: payload.firstName + payload.lastName,
-      email: payload.email,
-      phone: payload.phone,
-      branchId: 1000000900
-    }
-
     // const createdCustomerResponse = await createCustomer(customerData)
 
     // if (!createdCustomerResponse) {
@@ -138,9 +130,6 @@ export const register = async (
     ) {
       toastError("Email " + payload.email + " này đã được sử dụng!!");
       cbe?.setFieldError("email", "Email này đã được sử dụng!");
-    } else if (error.response.data.message.includes("Duplicate")) {
-      cbe?.setFieldError("phone", "Số điện thoại này đã được sử dụng!");
-      toastError("Số điện thoại " + payload.phone + " này đã được sử dụng!!");
     } else {
       toastError(error.message);
     }

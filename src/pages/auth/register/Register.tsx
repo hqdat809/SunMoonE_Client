@@ -1,30 +1,20 @@
 import { LoadingButton } from "@mui/lab";
 import { TextField } from "@mui/material";
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { TRegisterRequest } from "../../../interfaces/user-interfaces";
+import * as RoutePath from "../../../routes/paths";
 import * as authService from "../../../services/auth-service";
 import "./RegisterForm.scss";
-import Timing from "../../../components/timing/Timing";
-import OTPInput from "react-otp-input";
-import * as RoutePath from "../../../routes/paths";
 
 interface IRegisterProps {
   setHasAccount: (value: boolean) => void;
 }
 const RegisterForm = ({ setHasAccount }: IRegisterProps) => {
   const navigate = useNavigate();
-  const isSignIn = false;
-  const [isSendOTP, setIsSendOTP] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [count, setCount] = useState(30);
-
-  const validationOtpSchema = Yup.object().shape({
-    otp: Yup.string().required("Trường này không được bỏ trống").min(6),
-  });
 
   const validationSchema = Yup.object().shape({
     firstName: Yup.string().required("Họ không được bỏ trống"),
@@ -35,27 +25,7 @@ const RegisterForm = ({ setHasAccount }: IRegisterProps) => {
       )
       .required("Email không được bỏ trống"),
     password: Yup.string().required("Mật khẩu không được bỏ trống"),
-    phone: Yup.string().required("Số điện thoại không được bỏ trống"),
   });
-
-  const handleNavigateHome = () => {
-    navigate("/", { replace: true });
-    authService.getTokenFromKiotViet();
-  };
-
-  const handleSubmitOtp = (values: { otp: string }) => {
-    setLoading(true);
-    authService
-      .verifyEmail({ email, otp: values.otp }, handleNavigateHome)
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
-  const handleSendOtp = (values?: string) => {
-    setIsSendOTP(true);
-    authService.sendOTP(values || email).finally(() => { });
-  };
 
   const handleNavigateToHomePage = () => {
     navigate(RoutePath.DASHBOARD, { replace: true });
@@ -66,7 +36,6 @@ const RegisterForm = ({ setHasAccount }: IRegisterProps) => {
     formikProps: FormikHelpers<any>
   ) => {
     setLoading(true);
-    setEmail(values.email);
     await authService.register(values, formikProps).finally(() => {
       setLoading(false);
     });
@@ -81,7 +50,6 @@ const RegisterForm = ({ setHasAccount }: IRegisterProps) => {
           lastName: "",
           email: "",
           password: "",
-          phone: "",
         }}
         validationSchema={validationSchema}
         onSubmit={(values, formikProps) => {
@@ -195,26 +163,6 @@ const RegisterForm = ({ setHasAccount }: IRegisterProps) => {
               />
               <ErrorMessage
                 name="password"
-                component="div"
-                className="login-error-text"
-              />
-            </div>
-            <div className="form-outline mb-3">
-              <Field
-                type="text"
-                name="phone"
-                label="Số điện thoại"
-                error={formikProps.errors.phone && formikProps.touched.phone}
-                as={TextField}
-                id="form3Example4"
-                className={`form-control form-control-lg  ${formikProps.errors.phone &&
-                  formikProps.touched.phone &&
-                  "login-error-field"
-                  }`}
-                placeholder="Nhập mật số điện thoại"
-              />
-              <ErrorMessage
-                name="phone"
                 component="div"
                 className="login-error-text"
               />

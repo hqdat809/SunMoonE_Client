@@ -15,7 +15,6 @@ export type TRegisterRequest = {
   lastName: string;
   email: string;
   password: string;
-  phone: string;
 };
 
 export type TSignInResponse = {
