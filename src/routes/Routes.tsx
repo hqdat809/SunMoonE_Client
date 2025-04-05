@@ -6,11 +6,14 @@ import {
 } from "react-router-dom";
 import { getStorageToken } from "../utils/storage-utils";
 import * as RoutePaths from "./paths";
+
 const Auth = React.lazy(() => import("../pages/auth/Auth"));
 const Dashboard = React.lazy(() => import("../pages/shop/dashboard/Dashboard"));
 const Order = React.lazy(() => import("../pages/shop/order/Order"));
 const Profile = React.lazy(() => import("../pages/profile/ProfilePage"));
-const OrderListPage = React.lazy(() => import("../pages/order-list/OrderListPage"));
+const OrderListPage = React.lazy(
+  () => import("../pages/order-list/OrderListPage")
+);
 const Product = React.lazy(() => import("../pages/shop/product/Product"));
 const ProductDetail = React.lazy(
   () => import("../pages/shop/product-detail/ProductDetail")
@@ -66,7 +69,9 @@ const Routes = () => {
 
   return (
     <Suspense>
-      <RouterProvider router={getStorageToken() ? authenticatedRouter : signInRouter} />
+      <RouterProvider
+        router={getStorageToken() ? authenticatedRouter : signInRouter}
+      />
     </Suspense>
   );
 };
