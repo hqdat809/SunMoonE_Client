@@ -4,7 +4,20 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { LoadingButton } from "@mui/lab";
 import * as Yup from "yup";
-import { Autocomplete, Button, createFilterOptions, Divider, FormLabel, Input, InputBase, MenuItem, Select, styled, TextareaAutosize, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Button,
+  createFilterOptions,
+  Divider,
+  FormLabel,
+  Input,
+  InputBase,
+  MenuItem,
+  Select,
+  styled,
+  TextareaAutosize,
+  TextField,
+} from "@mui/material";
 import * as provinceService from "../../../services/province-service";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -23,18 +36,21 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import { createOrder, getAllLocations } from "../../../services/order-service";
 import { verifyEmail } from "../../../services/auth-service";
 import { toastError, toastSuccess } from "../../../utils/notifications-utils";
-import HandshakeIcon from '@mui/icons-material/Handshake';
+import HandshakeIcon from "@mui/icons-material/Handshake";
 import { PAYMENT_TYPE } from "../../../enum/OrderEnum";
 import { useNavigate } from "react-router-dom";
 import * as RoutePath from "../../../routes/paths";
-import { getUserAddress, updateUserAddress } from "../../../services/user-service";
+import {
+  getUserAddress,
+  updateUserAddress,
+} from "../../../services/user-service";
 import { IUserAddress } from "../../../interfaces/user-interfaces";
+import { updateCustomerAddress } from "../../../services/customer-service";
 
 const filterOptions = createFilterOptions({
-  matchFrom: 'start',
+  matchFrom: "start",
   stringify: (option: any) => option?.name,
 });
-
 
 const Order = () => {
   const { cart, setCart } = useContext(CartContext);
@@ -51,7 +67,7 @@ const Order = () => {
     name: "",
     phoneNumber: "",
     address: "",
-    wardName: ""
+    wardName: "",
   });
   const [addressRecipient, setAddressRecipient] = useState<any>();
   const [selectedLocation, setSelectedLocation] = useState<any>({ id: 0 });
@@ -59,70 +75,76 @@ const Order = () => {
   const [wards, setWards] = useState<any[]>([]);
   const [selectedWard, setSelectedWard] = useState<any>();
 
-
-
   const [productInCart, setProductInCart] = useState<ICart[]>(cart);
   const [location, setLocation] = useState<any[]>();
   const [note, setNote] = useState("");
 
-
-
   const [payment, setPayment] = React.useState(PAYMENT_TYPE.COD);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: PAYMENT_TYPE) => {
+  const handleChange = (
+    event: React.SyntheticEvent,
+    newValue: PAYMENT_TYPE
+  ) => {
     setPayment(newValue);
-    setProductInCart(cart)
+    setProductInCart(cart);
   };
 
   const handleGetAllLocations = async () => {
     await getAllLocations().then((res) => {
-      setLocation(res)
-    })
-  }
+      setLocation(res);
+    });
+  };
 
   const handleGetUserAddress = async () => {
     try {
-      const userDetails = JSON.parse(localStorage.getItem('userDetails') || '')
-      const res = await getUserAddress(userDetails.id)
+      const userDetails = JSON.parse(localStorage.getItem("userDetails") || "");
+      const res = await getUserAddress(userDetails.id);
       if (res.data.id) {
-        const { location, id, ...userAddress } = res.data
-        const addRecipient = { ...userAddress, selectedLocation: JSON.parse(location) };
-        setFormLocationValues(userAddress)
-        setAddressRecipient(addRecipient)
-        handleSelectLocation(addRecipient.selectedLocation)
+        const { location, id, ...userAddress } = res.data;
+        const addRecipient = {
+          ...userAddress,
+          selectedLocation: JSON.parse(location),
+        };
+        setFormLocationValues(userAddress);
+        setAddressRecipient(addRecipient);
+        handleSelectLocation(addRecipient.selectedLocation);
 
-        const wardData = await handleGetWards(addRecipient?.selectedLocation?.name)
+        const wardData = await handleGetWards(
+          addRecipient?.selectedLocation?.name
+        );
 
-        const ward = wardData.filter((w: any) => w?.name === addRecipient.wardName)
+        const ward = wardData.filter(
+          (w: any) => w?.name === addRecipient.wardName
+        );
 
-        setSelectedWard(ward[0])
-
+        setSelectedWard(ward[0]);
       }
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   useEffect(() => {
-    handleGetProvinceData()
-    handleGetAllLocations()
-    handleGetUserAddress()
+    handleGetProvinceData();
+    handleGetAllLocations();
+    handleGetUserAddress();
   }, []);
 
   const handleSubmitUserInfo = async (values: any) => {
-
     try {
-      values.wardName = selectedWard?.name
-      const userDetails = JSON.parse(localStorage.getItem('userDetails') || '')
+      values.wardName = selectedWard?.name;
+      const userDetails = JSON.parse(localStorage.getItem("userDetails") || "");
 
       const addRecipient = { ...values, selectedLocation };
-      await updateUserAddress(userDetails.id, { ...values, location: JSON.stringify(selectedLocation) })
+      await updateUserAddress(userDetails.id, {
+        ...values,
+        location: JSON.stringify(selectedLocation),
+      });
       setFormLocationValues(values);
       setAddressRecipient(addRecipient);
     } catch (error) {
       console.error(error);
     }
-
   };
 
   const handleEditLocation = () => {
@@ -178,13 +200,11 @@ const Order = () => {
       return [];
     }
 
-
     let provinces = provinceData;
 
     if (!provinces) {
-      provinces = await provinceService.getProvinces()
+      provinces = await provinceService.getProvinces();
     }
-
 
     // Duyệt qua data để tìm đúng tỉnh/thành phố và quận/huyện
     let wards = [];
@@ -192,7 +212,7 @@ const Order = () => {
       if (province?.name.endsWith(provinceName)) {
         for (const district of province.districts) {
           if (district?.name.endsWith(districtName)) {
-            setWards(district.wards)
+            setWards(district.wards);
             wards = district.wards;
             break;
           }
@@ -200,21 +220,21 @@ const Order = () => {
       }
     }
 
-    return wards
-  }
+    return wards;
+  };
 
   const handleSelectLocation = async (value: any) => {
-    setSelectedLocation(value)
-    handleGetWards(value?.name)
-    setSelectedWard(null)
-  }
+    setSelectedLocation(value);
+    handleGetWards(value?.name);
+    setSelectedWard(null);
+  };
 
   const handleGetTotalPriceInCart = useCallback(() => {
     let totalPrice = 0;
     cart.forEach((item) => {
       totalPrice += item.details.basePrice * item.count;
     });
-    totalPrice += 30000
+    totalPrice += 30000;
     return totalPrice.toLocaleString("vi-VN");
   }, [cart]);
 
@@ -234,28 +254,29 @@ const Order = () => {
 
   const handleChangeNote = (e: any) => {
     setNote(e.target.value);
-  }
+  };
 
   useEffect(() => {
-    console.log(selectedWard)
+    console.log(selectedWard);
   }, [selectedWard]);
 
-
   const handleChangePrice = (e: any, cartDetail: ICart) => {
-    const newCarts = productInCart.map(c => {
+    const newCarts = productInCart.map((c) => {
       if (c.details.id === cartDetail.details.id) {
-        return ({ ...c, details: { ...cartDetail.details, basePrice: e.target.value } })
+        return {
+          ...c,
+          details: { ...cartDetail.details, basePrice: e.target.value },
+        };
       }
       return c;
-    })
+    });
 
-    setProductInCart(newCarts)
-  }
-
+    setProductInCart(newCarts);
+  };
 
   const handleCreateOrder = async () => {
     try {
-      const orderDetails = cart.map(product => {
+      const orderDetails = cart.map((product) => {
         return {
           productId: product.details.id,
           quantity: product.count,
@@ -263,35 +284,35 @@ const Order = () => {
           price: product.details.basePrice,
           discount: 0,
           discountRatio: 0,
-          viewDiscount: 0.0000
-        }
-      })
+          viewDiscount: 0.0,
+        };
+      });
 
       if (!addressRecipient) {
-        toastError("Vui lòng lưu thông tin liên lạc")
-        return
+        toastError("Vui lòng lưu thông tin liên lạc");
+        return;
       }
 
-      let description = '';
+      let description = "";
 
       switch (payment) {
-        case (PAYMENT_TYPE.COD):
-          description = "COD"
+        case PAYMENT_TYPE.COD:
+          description = "COD";
           break;
-        case (PAYMENT_TYPE.BANKING):
-          description = "BANKING"
+        case PAYMENT_TYPE.BANKING:
+          description = "BANKING";
           break;
-        case (PAYMENT_TYPE.COLLECTOR):
-          description = "Thu hộ " + handleGetTotalPriceCollector() + "đ"
+        case PAYMENT_TYPE.COLLECTOR:
+          description = "Thu hộ " + handleGetTotalPriceCollector() + "đ";
           break;
       }
 
-      const userDetails = JSON.parse(localStorage.getItem("userDetails") || "")
+      const userDetails = JSON.parse(localStorage.getItem("userDetails") || "");
 
       const address = `${addressRecipient.address}`;
       const customerDetails = {
         id: userDetails.customerId,
-      }
+      };
 
       const orderDelivery = {
         receiver: addressRecipient?.name,
@@ -300,39 +321,42 @@ const Order = () => {
         wardName: addressRecipient.wardName,
         locationId: addressRecipient.selectedLocation.id,
         locationName: addressRecipient.selectedLocation?.name,
-        price: parseInt(handleGetTotalPriceInCart())
-      }
+        price: parseInt(handleGetTotalPriceInCart()),
+      };
 
       const newOrder = {
-        description: description + '\n' + note,
+        description: description + "\n" + note,
         saleChannelId: 1000003992,
         branchId: 286368,
         orderDetails,
         orderDelivery,
-        customer: customerDetails
-      }
+        customer: customerDetails,
+      };
 
-      await createOrder(newOrder)
-      toastSuccess("Đã tạo đơn hàng thành công", "Thành công")
+      await updateCustomerAddress(customerDetails.id, {
+        contactNumber: orderDelivery.contactNumber,
+        address: orderDelivery.address,
+        locationName: orderDelivery.locationName,
+        wardName: addressRecipient.wardName,
+      });
+
+      await createOrder(newOrder);
+      toastSuccess("Đã tạo đơn hàng thành công", "Thành công");
       navigate(RoutePath.ORDER_LIST);
-      setCart([])
+      setCart([]);
     } catch (error: any) {
-      toastError(error.message)
+      toastError(error.message);
     }
-
-  }
+  };
 
   useEffect(() => {
     setProductInCart(cart);
   }, [cart]);
 
   const handleGetProvinceData = async () => {
-    const provinceData = await provinceService.getProvinces()
-    setProvinceData(provinceData)
-  }
-
-
-
+    const provinceData = await provinceService.getProvinces();
+    setProvinceData(provinceData);
+  };
 
   return (
     <div className="Order">
@@ -376,8 +400,9 @@ const Order = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         size="small"
-                        className={`form-control form-control-lg  ${errors?.name && touched?.name && "Form__error-field"
-                          }`}
+                        className={`form-control form-control-lg  ${
+                          errors?.name && touched?.name && "Form__error-field"
+                        }`}
                         helperText={touched?.name && errors?.name}
                       />
                       <Field
@@ -390,10 +415,11 @@ const Order = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         size="small"
-                        className={`form-control form-control-lg  ${errors.phoneNumber &&
+                        className={`form-control form-control-lg  ${
+                          errors.phoneNumber &&
                           touched.phoneNumber &&
                           "Form__error-field"
-                          }`}
+                        }`}
                         helperText={touched.phoneNumber && errors.phoneNumber}
                       />
                     </div>
@@ -404,13 +430,25 @@ const Order = () => {
                         getOptionLabel={(option) => option?.name}
                         filterOptions={filterOptions}
                         fullWidth
-                        value={selectedLocation?.id === 0 ? null : selectedLocation}
-                        className={` ${!selectedLocation &&
-                          "Form__error-field"
-                          }`}
-
+                        value={
+                          selectedLocation?.id === 0 ? null : selectedLocation
+                        }
+                        className={` ${
+                          !selectedLocation && "Form__error-field"
+                        }`}
                         onChange={(e, value) => handleSelectLocation(value)}
-                        renderInput={(params) => <TextField {...params} label="Chọn tỉnh thành" size="small" fullWidth helperText={selectedLocation === null && "Trường này không được bỏ trống"} />}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Chọn tỉnh thành"
+                            size="small"
+                            fullWidth
+                            helperText={
+                              selectedLocation === null &&
+                              "Trường này không được bỏ trống"
+                            }
+                          />
+                        )}
                       />
 
                       <Autocomplete
@@ -419,12 +457,18 @@ const Order = () => {
                         filterOptions={filterOptions}
                         fullWidth
                         value={selectedWard}
-                        className={` ${!setSelectedWard &&
-                          "Form__error-field"
-                          }`}
-
+                        className={` ${
+                          !setSelectedWard && "Form__error-field"
+                        }`}
                         onChange={(e, value) => setSelectedWard(value)}
-                        renderInput={(params) => <TextField {...params} label="Chọn phường xã" size="small" fullWidth />}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Chọn phường xã"
+                            size="small"
+                            fullWidth
+                          />
+                        )}
                       />
                       <Field
                         type="text"
@@ -436,10 +480,11 @@ const Order = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         size="small"
-                        className={`form-control form-control-lg  ${errors.address &&
+                        className={`form-control form-control-lg  ${
+                          errors.address &&
                           touched.address &&
                           "Form__error-field"
-                          }`}
+                        }`}
                         helperText={touched.address && errors.address}
                       />
                     </div>
@@ -608,13 +653,34 @@ const Order = () => {
                 </div>
               </TabPanel>
               <TabPanel value={PAYMENT_TYPE.COLLECTOR}>
-                <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexDirection: 'column' }}>
-                  <span><span style={{ textDecoration: "underline" }}>Chú ý:</span> Nhấn vào giá của sản phẩm để chỉnh sửa </span>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 10,
+                    alignItems: "center",
+                    flexDirection: "column",
+                  }}
+                >
+                  <span>
+                    <span style={{ textDecoration: "underline" }}>Chú ý:</span>{" "}
+                    Nhấn vào giá của sản phẩm để chỉnh sửa{" "}
+                  </span>
                   {/* <FormLabel >Nhập mức tiền thu hộ (vnđ)</FormLabel>
                   <Input value={collector} placeholder="VND" onChange={(e) => {
                     setCollector(Number(e.target.value.replace(/\D/g, "")).toLocaleString('vi-VN'))
                   }} /> */}
-                  <div style={{ fontSize: 20, fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', width: '100%' }}><span>Tổng cộng: </span><span>{handleGetTotalPriceCollector()}đ</span></div>
+                  <div
+                    style={{
+                      fontSize: 20,
+                      fontWeight: "bold",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      width: "100%",
+                    }}
+                  >
+                    <span>Tổng cộng: </span>
+                    <span>{handleGetTotalPriceCollector()}đ</span>
+                  </div>
                 </div>
               </TabPanel>
             </TabContext>
@@ -639,14 +705,17 @@ const Order = () => {
               ></div>
               <div className="Order__item-name">{cartItem.details?.name}</div>
               <div className="Order__item-price">
-                {payment === PAYMENT_TYPE.COLLECTOR ?
+                {payment === PAYMENT_TYPE.COLLECTOR ? (
                   <InputBase
                     type="number"
                     className="Order__item-price-input"
                     dir="rtl"
                     value={cartItem.details?.basePrice}
-                    onChange={(e) => handleChangePrice(e, cartItem)} />
-                  : cartItem.details?.basePrice.toLocaleString("vi-VN")}
+                    onChange={(e) => handleChangePrice(e, cartItem)}
+                  />
+                ) : (
+                  cartItem.details?.basePrice.toLocaleString("vi-VN")
+                )}
               </div>
               <span>x</span>
               <div className="Order__item-quantity">
@@ -690,7 +759,7 @@ const Order = () => {
             </div>
           ))}
           {productInCart.map((cartItem, index) => (
-            <div className="Order__item-mobile" style={{ display: 'none' }}>
+            <div className="Order__item-mobile" style={{ display: "none" }}>
               <div
                 className="Order__item-image"
                 style={{
@@ -699,15 +768,25 @@ const Order = () => {
               ></div>
               <div className="Order__item-details">
                 <div className="Order__item-name">{cartItem.details?.name}</div>
-                <div style={{ display: 'flex', gap: 10, alignItems: 'center', justifyContent: 'space-between' }}>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 10,
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
                   <div className="Order__item-price">
-                    {payment === PAYMENT_TYPE.COLLECTOR ?
+                    {payment === PAYMENT_TYPE.COLLECTOR ? (
                       <InputBase
                         type="number"
                         className="Order__item-price-input"
                         value={cartItem.details?.basePrice}
-                        onChange={(e) => handleChangePrice(e, cartItem)} />
-                      : cartItem.details?.basePrice.toLocaleString("vi-VN")}
+                        onChange={(e) => handleChangePrice(e, cartItem)}
+                      />
+                    ) : (
+                      cartItem.details?.basePrice.toLocaleString("vi-VN")
+                    )}
                   </div>
                   <span>x</span>
                   <div className="Order__item-quantity">
@@ -737,9 +816,9 @@ const Order = () => {
                   </div>
                 </div>
                 <div className="Order__item-totalPrice">
-                  {(cartItem.details?.basePrice * cartItem.count).toLocaleString(
-                    "vi-VN"
-                  )}
+                  {(
+                    cartItem.details?.basePrice * cartItem.count
+                  ).toLocaleString("vi-VN")}
                   đ
                 </div>
                 {/* <div
@@ -754,7 +833,14 @@ const Order = () => {
         </div>
 
         <div className="Order__total">
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginRight: 20, gap: 8 }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginRight: 20,
+              gap: 8,
+            }}
+          >
             <div className="Order__total-label">Tổng cộng</div>
             <div className="Order__total-item">
               {handleGetTotalItemInCart()} <span>(sản phẩm):</span>
@@ -775,7 +861,12 @@ const Order = () => {
           <div className="Order__title-text">Ghi chú</div>
         </div>
         <div className="Order__tabs">
-          <textarea onChange={handleChangeNote} className="Order__note-textarea" placeholder="Nhập ghi chú..." cols={5} />
+          <textarea
+            onChange={handleChangeNote}
+            className="Order__note-textarea"
+            placeholder="Nhập ghi chú..."
+            cols={5}
+          />
         </div>
       </div>
       <div className="Order__bill">
@@ -800,9 +891,7 @@ const Order = () => {
           </div>
           <div className="Order__bill-item">
             <div className="Order__bill-label">Phí vận chuyển: </div>
-            <div className="Order__bill-value">
-              30.000đ
-            </div>
+            <div className="Order__bill-value">30.000đ</div>
           </div>
           <div className="Order__bill-item">
             <div className="Order__bill-label">Tổng thanh toán: </div>
@@ -819,7 +908,10 @@ const Order = () => {
               <Button variant="contained">Đặt hàng</Button>
             </div>
           </div>
-          <div className="Order__bill-actions-mobile" style={{ display: 'none' }}>
+          <div
+            className="Order__bill-actions-mobile"
+            style={{ display: "none" }}
+          >
             <div className="Order__bill-actions-details">
               <div>Tổng cộng: </div>
               <div className="Order__bill-actions-details-price">
