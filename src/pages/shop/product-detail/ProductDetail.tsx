@@ -34,29 +34,30 @@ const ProductDetail = () => {
 
   const [details, setDetails] = useState<IProductResponse>();
 
-  const handleRenderDescription = (text?: string) => {
-    if (!text) {
-      return <></>
-    }
+  // const handleRenderDescription = (text?: string) => {
+  //   console.log("text", text);
 
-    const arr = text.split("<br/>")
+  //   if (!text) {
+  //     return <></>;
+  //   }
 
-    return arr.map((item, index) => {
-      return (
-        <div key={index}>
-          <span>{item}</span>
-          <br />
-        </div>
-      );
-    });
-  }
+  //   const arr = text.split("<br/>");
 
+  //   return arr.map((item, index) => {
+  //     return (
+  //       <div key={index}>
+  //         <span>{item}</span>
+  //         <br />
+  //       </div>
+  //     );
+  //   });
+  // };
 
   const handleBuyNow = () => {
-    handleAddToCart()
+    handleAddToCart();
     navigate(RoutePath.ORDER);
     setOpen(false);
-  }
+  };
 
   const handleAddToCart = () => {
     setOpen(true);
@@ -153,20 +154,20 @@ const ProductDetail = () => {
                 {handleGetOldPrice(details)}đ
               </div>
             )}
-
           </div>
 
           <div
             className="ProductDetail__details-description"
             id="ProductDetail__details-description"
           >
-            {handleRenderDescription(details?.description)}
+            <div
+              className="prose max-w-none"
+              dangerouslySetInnerHTML={{ __html: details?.description || "" }}
+            />
           </div>
 
           {details?.description && (
-            <div
-              className="ProductDetail__details-more"
-            >
+            <div className="ProductDetail__details-more">
               Xem thêm ở dưới mô tả sản phẩm
             </div>
           )}
@@ -243,7 +244,10 @@ const ProductDetail = () => {
           className="ProductDetail__moreDetails-description"
           id="ProductDetail__moreDetails-description"
         >
-          {handleRenderDescription(details?.description)}
+          <div
+            className="prose max-w-none"
+            dangerouslySetInnerHTML={{ __html: details?.description || "" }}
+          />
         </div>
       </div>
 
@@ -252,7 +256,10 @@ const ProductDetail = () => {
           Sản phẩm liên quan:
         </div>
 
-        <div className="ProductDetail__productRelated-mobile" style={{ display: "none" }}>
+        <div
+          className="ProductDetail__productRelated-mobile"
+          style={{ display: "none" }}
+        >
           {productsRelated.map((p) => (
             <div className="Product__list-item" key={p.id}>
               <ProductCard product={p} />
@@ -269,15 +276,16 @@ const ProductDetail = () => {
           {productsRelated.map((product) => (
             <SwiperSlide>
               <div className="ProductDetail__productRelated-item">
-                <ProductCard
-                  product={product}
-                />
+                <ProductCard product={product} />
               </div>
             </SwiperSlide>
           ))}
         </Swiper>
       </div>
-      <div className="ProductDetail__actions-mobile" style={{ display: "none" }}>
+      <div
+        className="ProductDetail__actions-mobile"
+        style={{ display: "none" }}
+      >
         <div className="ProductDetail__addToCart">
           <Button variant="outlined" onClick={handleAddToCart}>
             <span>Thêm vào giỏ hàng</span>
