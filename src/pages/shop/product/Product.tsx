@@ -96,6 +96,7 @@ const Product = () => {
               setProducts(response?.data.filter((p: IProductResponse) => p.unit === EUnit.CTV1));
               break;
             case EUserTypeCategory.CTV2:
+            case EUserTypeCategory.CTV3:
               setProducts(response?.data.filter((p: IProductResponse) => p.unit === EUnit.CTV2));
               break;
             default:
