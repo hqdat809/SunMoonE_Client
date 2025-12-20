@@ -2,6 +2,7 @@ import { MenuItem, Pagination, Skeleton, TextField } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { ICollections } from "../../../interfaces/collection-interface";
 import {
+  EUnit,
   IProductRequest,
   IProductResponse,
 } from "../../../interfaces/product-interface";
@@ -20,13 +21,14 @@ const priceSelections = [
 ];
 
 const Product = () => {
+
+  const userDetails = JSON.parse(localStorage.getItem("userDetails") || "{}");
+
   const initFilterProduct = {
-    pageSize: 20,
+    pageSize: 60,
     orderBy: "name",
     orderDirection: "ASC",
-    categoryId:
-      Number(JSON.parse(localStorage.getItem("CategoryParentId") || "")) ||
-      import.meta.env.VITE_COLLECTION_USER_ID,
+    categoryId: Number(import.meta.env.VITE_COLLECTION_USER_ID),
     currentItem: 0,
     isActive: true,
     branchIds: [import.meta.env.VITE_BRANCH_ID]
@@ -48,8 +50,6 @@ const Product = () => {
   const [products, setProducts] = useState<IProductResponse[]>([]);
 
   const [total, setTotal] = useState(0);
-
-  const [selectedCollectionId, setSelectedCollectionId] = useState<number>();
 
   const handleGetCollections = () => {
     getDetailCollection(
@@ -86,7 +86,21 @@ const Product = () => {
       .then((response) => {
         if (response) {
           setTotal(response.total);
-          setProducts(response?.data);
+
+          switch (userDetails.authorities[0].authority) {
+            case EUserTypeCategory.ADMIN:
+            case EUserTypeCategory.USER:
+              setProducts(response?.data.filter((p: IProductResponse) => p.unit === EUnit.USER));
+              break;
+            case EUserTypeCategory.CTV1:
+              setProducts(response?.data.filter((p: IProductResponse) => p.unit === EUnit.CTV1));
+              break;
+            case EUserTypeCategory.CTV2:
+              setProducts(response?.data.filter((p: IProductResponse) => p.unit === EUnit.CTV2));
+              break;
+            default:
+              setProducts(response?.data.filter((p: IProductResponse) => p.unit === EUnit.USER));
+          }
         }
       })
       .finally(() => {

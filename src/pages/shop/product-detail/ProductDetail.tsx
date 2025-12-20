@@ -5,7 +5,7 @@ import {
   getProducts,
 } from "../../../services/product-service";
 import { useNavigate, useParams } from "react-router-dom";
-import { IProductResponse } from "../../../interfaces/product-interface";
+import { EUnit, IProductResponse } from "../../../interfaces/product-interface";
 import noImageProduct from "../../../assets/images/no-product-image.png";
 import { Button, TextField } from "@mui/material";
 import AddShoppingCartTwoToneIcon from "@mui/icons-material/AddShoppingCartTwoTone";
@@ -18,19 +18,19 @@ import ProductCard from "../dashboard/product-card/ProductCard";
 import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
 import * as RoutePath from "../../../routes/paths";
 import { CartContext } from "../../layouts/Layouts";
+import { EUserTypeCategory } from "../../../interfaces/user-interfaces";
 interface IProps {
   productId: number;
 }
 
 const ProductDetail = () => {
+  const userDetails = JSON.parse(localStorage.getItem("userDetails") || "{}");
+
   const { productId } = useParams();
   const navigate = useNavigate();
   const { setOpen, setCart, cart } = useContext(CartContext);
 
   const [count, setCount] = useState(1);
-  const [productsRelated, setProductsRelated] = useState<IProductResponse[]>(
-    []
-  );
 
   const [details, setDetails] = useState<IProductResponse>();
 
@@ -79,20 +79,6 @@ const ProductDetail = () => {
     }
   };
 
-  const handleGetProductsRelated = (categoryId: number) => {
-    getProducts({
-      pageSize: 20,
-      orderBy: "createdDate",
-      orderDirection: "DESC",
-      categoryId: categoryId,
-      branchIds: import.meta.env.VITE_BRANCH_ID,
-    }).then((response) => {
-      if (response) {
-        setProductsRelated(response?.data);
-      }
-    });
-  };
-
   const handleReloadPage = () => {
     window.location.reload();
   };
@@ -112,12 +98,6 @@ const ProductDetail = () => {
     }
     return p.basePrice.toLocaleString("vi-VN");
   };
-
-  useEffect(() => {
-    if (details?.categoryId) {
-      handleGetProductsRelated(details?.categoryId);
-    }
-  }, [details]);
 
   useEffect(() => {
     if (productId) {
@@ -249,38 +229,6 @@ const ProductDetail = () => {
             dangerouslySetInnerHTML={{ __html: details?.description || "" }}
           />
         </div>
-      </div>
-
-      <div className="ProductDetail__productRelated">
-        <div className="ProductDetail__productRelated-label">
-          Sản phẩm liên quan:
-        </div>
-
-        <div
-          className="ProductDetail__productRelated-mobile"
-          style={{ display: "none" }}
-        >
-          {productsRelated.map((p) => (
-            <div className="Product__list-item" key={p.id}>
-              <ProductCard product={p} />
-            </div>
-          ))}
-        </div>
-        <Swiper
-          modules={[Navigation, Pagination, Scrollbar, A11y]}
-          spaceBetween={1.2}
-          slidesPerView={4.5}
-          scrollbar={{ draggable: true }}
-          className="ProductDetail__productRelated-swiper"
-        >
-          {productsRelated.map((product) => (
-            <SwiperSlide>
-              <div className="ProductDetail__productRelated-item">
-                <ProductCard product={product} />
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
       </div>
       <div
         className="ProductDetail__actions-mobile"

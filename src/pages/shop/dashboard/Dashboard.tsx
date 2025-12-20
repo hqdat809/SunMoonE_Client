@@ -108,16 +108,6 @@ const Dashboard = () => {
           </div>
         ))}
       </div>
-
-      {collections?.children
-        ?.filter((cate) => !cate.categoryName.includes("{DEL}"))
-        .map((collection) => (
-          <ListProduct
-            categoryId={collection.categoryId}
-            categoryName={collection.categoryName}
-            key={collection.categoryId}
-          />
-        ))}
     </div>
   );
 };

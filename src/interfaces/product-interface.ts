@@ -45,4 +45,11 @@ export interface IProductResponse {
   images: string[];
   modifiedDate: Date;
   createdDate: Date;
+  unit: EUnit;
+}
+
+export enum EUnit {
+  USER = "khách lẻ",
+  CTV1 = "ctv1",
+  CTV2 = "ctv2",
 }
