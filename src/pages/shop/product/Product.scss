@@ -104,6 +104,7 @@
       color: $white !important;
     }
   }
+
 }
 
 .Skeleton__product {
@@ -170,11 +171,4 @@
     }
   }
 
-  .ListProducts-products-addToCart {
-    display: none;
-  }
-
-  .ListProducts-products-addToCart, .ListProducts-products-buying {
-    display: none !important;
-  }
 }

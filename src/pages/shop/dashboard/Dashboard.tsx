@@ -20,29 +20,6 @@ import imageBanner1 from "../../../assets/images/banner1.jpg"
 import imageBanner2 from "../../../assets/images/banner2.jpg"
 import Product from "../product/Product";
 
-const incentives = [
-  {
-    title: "Miễn phí ship",
-    description: "Trong nội thành",
-    icon: <LocalShippingIcon />,
-  },
-  {
-    title: "Nhiều ưu đãi",
-    description: "Cho CTV",
-    icon: <GroupsIcon />,
-  },
-  {
-    title: "Sản phẩm đa dạng",
-    description: "",
-    icon: <AllInclusiveIcon />,
-  },
-  {
-    title: "Hoàn toàn tự nhiên",
-    description: "",
-    icon: <SpaIcon />,
-  },
-];
-
 const Dashboard = () => {
   const [collections, setCollections] = useState<ICollections>();
 
@@ -95,19 +72,6 @@ const Dashboard = () => {
       </div>
       <div className="Dashboard__banner" >
         <img src={imageBanner2} alt="" />
-      </div>
-      <div className="Dashboard__incentives">
-        {incentives.map((item, index) => (
-          <div className="Dashboard__incentives-item" key={index}>
-            <div className="Dashboard__incentives-icon">{item.icon}</div>
-            <div className="Dashboard__incentives-content">
-              <div className="Dashboard__incentives-title">{item.title}</div>
-              <div className="Dashboard__incentives-description">
-                {item.description}
-              </div>
-            </div>
-          </div>
-        ))}
       </div>
       <Product/>
     </div>
