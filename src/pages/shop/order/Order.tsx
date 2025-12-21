@@ -46,6 +46,8 @@ import {
 } from "../../../services/user-service";
 import { IUserAddress } from "../../../interfaces/user-interfaces";
 import { updateCustomerAddress } from "../../../services/customer-service";
+import { EUnit, IUnit } from "../../../interfaces/product-interface";
+import { EUserTypeCategory } from "../../../interfaces/user-interfaces";
 
 const filterOptions = createFilterOptions({
   matchFrom: "start",
@@ -55,6 +57,8 @@ const filterOptions = createFilterOptions({
 const Order = () => {
   const { cart, setCart } = useContext(CartContext);
   const navigate = useNavigate();
+  const userDetails = JSON.parse(localStorage.getItem("userDetails") || "{}");
+  const userRole = userDetails.authorities?.[0]?.authority;
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("Tên không được bỏ trống"),
@@ -165,21 +169,36 @@ const Order = () => {
     return totalPrice.toLocaleString("vi-VN");
   }, [cart]);
 
+  const handleGetBasePriceNumber = (p: any): number => {
+    switch (userRole) {
+      case EUserTypeCategory.USER:
+        return p.basePrice;
+      case EUserTypeCategory.CTV1:
+        return p.units?.find((unit: IUnit) => unit.unit === EUnit.CTV1)?.basePrice || p.basePrice;
+      case EUserTypeCategory.CTV2:
+        return p.units?.find((unit: IUnit) => unit.unit === EUnit.CTV2)?.basePrice || p.basePrice;
+      case EUserTypeCategory.CTV3:
+        return p.units?.find((unit: IUnit) => unit.unit === EUnit.CTV3)?.basePrice || p.basePrice;
+      default:
+        return p.basePrice;
+    }
+  };
+
   const handleGetTotalPriceCollector = useCallback(() => {
     let totalPrice = 0;
     productInCart.forEach((item) => {
-      totalPrice += item.details.basePrice * item.count;
+      totalPrice += handleGetBasePriceNumber(item.details) * item.count;
     });
     return totalPrice.toLocaleString("vi-VN");
-  }, [productInCart]);
+  }, [productInCart, userRole]);
 
   const handleGetTotalPriceNotShip = useCallback(() => {
     let totalPrice = 0;
     cart.forEach((item) => {
-      totalPrice += item.details.basePrice * item.count;
+      totalPrice += handleGetBasePriceNumber(item.details) * item.count;
     });
     return totalPrice.toLocaleString("vi-VN");
-  }, [cart]);
+  }, [cart, userRole]);
 
   const handleGetWards = async (str: string) => {
     // Tách chuỗi để lấy tên tỉnh/thành phố và quận/huyện
@@ -232,11 +251,11 @@ const Order = () => {
   const handleGetTotalPriceInCart = useCallback(() => {
     let totalPrice = 0;
     cart.forEach((item) => {
-      totalPrice += item.details.basePrice * item.count;
+      totalPrice += handleGetBasePriceNumber(item.details) * item.count;
     });
     totalPrice += 30000;
     return totalPrice.toLocaleString("vi-VN");
-  }, [cart]);
+  }, [cart, userRole]);
 
   const handleChangeQuantity = (index: number, type: string) => {
     const newListCart = [...cart];
@@ -281,7 +300,7 @@ const Order = () => {
           productId: product.details.id,
           quantity: product.count,
           productName: product.details?.name,
-          price: product.details.basePrice,
+          price: handleGetBasePriceNumber(product.details),
           discount: 0,
           discountRatio: 0,
           viewDiscount: 0.0,
@@ -710,11 +729,11 @@ const Order = () => {
                     type="number"
                     className="Order__item-price-input"
                     dir="rtl"
-                    value={cartItem.details?.basePrice}
+                    value={handleGetBasePriceNumber(cartItem.details)}
                     onChange={(e) => handleChangePrice(e, cartItem)}
                   />
                 ) : (
-                  cartItem.details?.basePrice.toLocaleString("vi-VN")
+                  handleGetBasePriceNumber(cartItem.details).toLocaleString("vi-VN")
                 )}
               </div>
               <span>x</span>
@@ -745,7 +764,7 @@ const Order = () => {
               </div>
               <span>=</span>
               <div className="Order__item-totalPrice">
-                {(cartItem.details?.basePrice * cartItem.count).toLocaleString(
+                {(handleGetBasePriceNumber(cartItem.details) * cartItem.count).toLocaleString(
                   "vi-VN"
                 )}
                 đ
@@ -781,11 +800,11 @@ const Order = () => {
                       <InputBase
                         type="number"
                         className="Order__item-price-input"
-                        value={cartItem.details?.basePrice}
+                        value={handleGetBasePriceNumber(cartItem.details)}
                         onChange={(e) => handleChangePrice(e, cartItem)}
                       />
                     ) : (
-                      cartItem.details?.basePrice.toLocaleString("vi-VN")
+                      handleGetBasePriceNumber(cartItem.details).toLocaleString("vi-VN")
                     )}
                   </div>
                   <span>x</span>
@@ -817,7 +836,7 @@ const Order = () => {
                 </div>
                 <div className="Order__item-totalPrice">
                   {(
-                    cartItem.details?.basePrice * cartItem.count
+                    handleGetBasePriceNumber(cartItem.details) * cartItem.count
                   ).toLocaleString("vi-VN")}
                   đ
                 </div>

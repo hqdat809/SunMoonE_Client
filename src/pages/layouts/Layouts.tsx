@@ -13,9 +13,10 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import Navbar from "../../components/navbar/Navbar";
-import { IProductResponse } from "../../interfaces/product-interface";
+import { EUnit, IProductResponse, IUnit } from "../../interfaces/product-interface";
 import * as RoutePath from "../../routes/paths";
 import { getStorageToken } from "../../utils/storage-utils";
+import { EUserTypeCategory } from "../../interfaces/user-interfaces";
 import "./Layouts.scss";
 
 interface ILayoutsProps {
@@ -46,6 +47,8 @@ const Layouts = ({ setAccessToken }: ILayoutsProps) => {
   const [isExpand, setIsExpand] = useState(true);
   const [open, setOpen] = useState<boolean>(false);
   const [cart, setCart] = useState<ICart[]>([]);
+  const userDetails = JSON.parse(localStorage.getItem("userDetails") || "{}");
+  const userRole = userDetails.authorities?.[0]?.authority;
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
@@ -78,13 +81,28 @@ const Layouts = ({ setAccessToken }: ILayoutsProps) => {
     setOpen(false);
   };
 
+  const handleGetBasePriceNumber = (p: IProductResponse): number => {
+    switch (userRole) {
+      case EUserTypeCategory.USER:
+        return p.basePrice;
+      case EUserTypeCategory.CTV1:
+        return p.units.find((unit: IUnit) => unit.unit === EUnit.CTV1)?.basePrice || p.basePrice;
+      case EUserTypeCategory.CTV2:
+        return p.units.find((unit: IUnit) => unit.unit === EUnit.CTV2)?.basePrice || p.basePrice;
+      case EUserTypeCategory.CTV3:
+        return p.units.find((unit: IUnit) => unit.unit === EUnit.CTV3)?.basePrice || p.basePrice;
+      default:
+        return p.basePrice;
+    }
+  };
+
   const handleGetTotalPriceInCart = useCallback(() => {
     let totalPrice = 0;
     cart.forEach((item) => {
-      totalPrice += item.details.basePrice * item.count;
+      totalPrice += handleGetBasePriceNumber(item.details) * item.count;
     });
     return totalPrice.toLocaleString("vi-VN");
-  }, [cart]);
+  }, [cart, userRole]);
 
   useEffect(() => {
     if (open) {
@@ -151,7 +169,7 @@ const Layouts = ({ setAccessToken }: ILayoutsProps) => {
               <div className="Cart__item-action">
                 <div className="Cart__item-price">
                   <span className="Cart__item-basePrice">
-                    {product.details.basePrice}
+                    {handleGetBasePriceNumber(product.details).toLocaleString("vi-VN")}
                   </span>{" "}
                   x {product.count}
                 </div>

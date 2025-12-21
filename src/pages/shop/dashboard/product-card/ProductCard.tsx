@@ -76,8 +76,9 @@ const ProductCard = ({ product }: IProps) => {
       case EUserTypeCategory.CTV1:
         return p.units.find((unit: IUnit) => unit.unit === EUnit.CTV1)?.basePrice.toLocaleString("vi-VN");
       case EUserTypeCategory.CTV2:
-      case EUserTypeCategory.CTV3:
         return p.units.find((unit: IUnit) => unit.unit === EUnit.CTV2)?.basePrice.toLocaleString("vi-VN");
+      case EUserTypeCategory.CTV3:
+        return p.units.find((unit: IUnit) => unit.unit === EUnit.CTV3)?.basePrice.toLocaleString("vi-VN");
       default:
         return p.basePrice.toLocaleString("vi-VN");
     }

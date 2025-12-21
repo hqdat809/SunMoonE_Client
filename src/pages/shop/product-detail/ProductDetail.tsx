@@ -5,7 +5,7 @@ import {
   getProducts,
 } from "../../../services/product-service";
 import { useNavigate, useParams } from "react-router-dom";
-import { EUnit, IProductResponse } from "../../../interfaces/product-interface";
+import { EUnit, IProductResponse, IUnit } from "../../../interfaces/product-interface";
 import noImageProduct from "../../../assets/images/no-product-image.png";
 import { Button, TextField } from "@mui/material";
 import AddShoppingCartTwoToneIcon from "@mui/icons-material/AddShoppingCartTwoTone";
@@ -25,6 +25,7 @@ interface IProps {
 
 const ProductDetail = () => {
   const userDetails = JSON.parse(localStorage.getItem("userDetails") || "{}");
+  const userRole = userDetails.authorities?.[0]?.authority;
 
   const { productId } = useParams();
   const navigate = useNavigate();
@@ -99,6 +100,21 @@ const ProductDetail = () => {
     return p.basePrice.toLocaleString("vi-VN");
   };
 
+  const handleGetBasePrice = (p: IProductResponse) => {
+    switch (userRole) {
+      case EUserTypeCategory.USER:
+        return p.basePrice.toLocaleString("vi-VN");
+      case EUserTypeCategory.CTV1:
+        return p.units.find((unit: IUnit) => unit.unit === EUnit.CTV1)?.basePrice.toLocaleString("vi-VN");
+      case EUserTypeCategory.CTV2:
+        return p.units.find((unit: IUnit) => unit.unit === EUnit.CTV2)?.basePrice.toLocaleString("vi-VN");
+      case EUserTypeCategory.CTV3:
+        return p.units.find((unit: IUnit) => unit.unit === EUnit.CTV3)?.basePrice.toLocaleString("vi-VN");
+      default:
+        return p.basePrice.toLocaleString("vi-VN");
+    }
+  };
+
   useEffect(() => {
     if (productId) {
       getProductDetails(parseInt(productId)).then((res) => {
@@ -127,11 +143,11 @@ const ProductDetail = () => {
 
           <div className="ProductDetail__details-price">
             <div className="ProductDetail__details-newPrice">
-              {details?.basePrice.toLocaleString("vi-VN")}đ
+              {details && handleGetBasePrice(details)}đ
             </div>
-            {details && handleGetOldPrice(details) && (
+            {details && userRole !== EUserTypeCategory.USER && userRole !== EUserTypeCategory.ADMIN && (
               <div className="ProductDetail__details-oldPrice">
-                {handleGetOldPrice(details)}đ
+                {details.basePrice.toLocaleString("vi-VN")}đ
               </div>
             )}
           </div>

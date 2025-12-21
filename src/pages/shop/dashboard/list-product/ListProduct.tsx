@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { getProducts } from "../../../../services/product-service";
-import { IProductResponse } from "../../../../interfaces/product-interface";
+import { EUnit, IProductResponse, IUnit } from "../../../../interfaces/product-interface";
 import "./ListProduct.scss";
 import ProductCard from "../product-card/ProductCard";
 import * as RoutePath from "../../../../routes/paths";
 import { useNavigate } from "react-router-dom";
 import { Button, Rating } from "@mui/material";
 import { CartContext } from "../../../layouts/Layouts";
+import { EUserTypeCategory } from "../../../../interfaces/user-interfaces";
 
 interface IProps {
   categoryId: number;
@@ -17,6 +18,8 @@ const ListProduct = ({ categoryId, categoryName }: IProps) => {
   const navigate = useNavigate();
   const { setOpen, setCart, cart } = useContext(CartContext);
   const [products, setProducts] = useState<IProductResponse[]>([]);
+  const userDetails = JSON.parse(localStorage.getItem("userDetails") || "{}");
+  const userRole = userDetails.authorities?.[0]?.authority;
 
   const handleNavigateProductDetailsPage = (productId: number) => {
     navigate(`${RoutePath.PRODUCTS}/${productId}`);
@@ -53,6 +56,21 @@ const ListProduct = ({ categoryId, categoryName }: IProps) => {
         productAsJSON.push({ details: product, count: 1 });
       }
       setCart(productAsJSON);
+    }
+  }
+
+  const handleGetBasePrice = (p: IProductResponse) => {
+    switch (userRole) {
+      case EUserTypeCategory.USER:
+        return p.basePrice.toLocaleString("vi-VN");
+      case EUserTypeCategory.CTV1:
+        return p.units.find((unit: IUnit) => unit.unit === EUnit.CTV1)?.basePrice.toLocaleString("vi-VN");
+      case EUserTypeCategory.CTV2:
+        return p.units.find((unit: IUnit) => unit.unit === EUnit.CTV2)?.basePrice.toLocaleString("vi-VN");
+      case EUserTypeCategory.CTV3:
+        return p.units.find((unit: IUnit) => unit.unit === EUnit.CTV3)?.basePrice.toLocaleString("vi-VN");
+      default:
+        return p.basePrice.toLocaleString("vi-VN");
     }
   }
 
@@ -109,7 +127,7 @@ const ListProduct = ({ categoryId, categoryName }: IProps) => {
                 </div>
               </div>
               <div className="ListProducts-products-basePrice">
-                {products[0]?.basePrice.toLocaleString("vi-VN")}đ
+                {products[0] && handleGetBasePrice(products[0])}đ
               </div>
               <div className="ListProducts-products-rating">
                 <Rating name="read-only" value={5} readOnly size="small" />
