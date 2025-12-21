@@ -32,16 +32,12 @@
     display: grid; /* Sử dụng Grid */
     grid-template-columns: repeat(3, 1fr); /* 3 cột với chiều rộng bằng nhau */
     gap: 20px; /* Khoảng cách giữa các sản phẩm */
-
-    &-item {
-     
-    }
   }
 
   &__contents {
     padding: 30px 100px 120px 100px;
-    margin-left: 200px;
-    margin-right: auto;
+    margin-left: 250px;
+    margin-right: 250px;
     min-height: 500px;
   }
 
