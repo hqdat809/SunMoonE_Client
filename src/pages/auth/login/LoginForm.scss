@@ -43,6 +43,43 @@
     font-size: 14px;
     line-height: 16px;
   }
+
+  .password-field-wrapper {
+    position: relative;
+
+    .password-toggle-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6c757d;
+      transition: color 0.2s;
+
+      &:hover {
+        color: #495057;
+      }
+
+      &:focus {
+        outline: none;
+        color: #495057;
+      }
+
+      svg {
+        font-size: 20px;
+      }
+    }
+
+    .form-control {
+      padding-right: 45px;
+    }
+  }
 }
 
 @media (max-width: 767px) {

@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import noProductImage from "../../../../assets/images/no-product-image.png";
-import { IProductResponse } from "../../../../interfaces/product-interface";
+import { EUnit, IProductResponse, IUnit } from "../../../../interfaces/product-interface";
 import "./ProductCard.scss";
 import * as RoutePath from "../../../../routes/paths";
 import { Button, Rating } from "@mui/material";
 import { useContext } from "react";
 import { CartContext } from "../../../layouts/Layouts";
+import { EUserTypeCategory } from "../../../../interfaces/user-interfaces";
 
 interface IProps {
   loading?: boolean;
@@ -16,6 +17,8 @@ interface IProps {
 const ProductCard = ({ product }: IProps) => {
   const navigate = useNavigate();
   const { setOpen, setCart, cart } = useContext(CartContext);
+  const userDetails = JSON.parse(localStorage.getItem("userDetails") || "{}");
+  const userRole = userDetails.authorities[0].authority;
 
   const handleNavigateProductDetailsPage = () => {
     navigate(`${RoutePath.PRODUCTS}/${product.id}`);
@@ -66,6 +69,22 @@ const ProductCard = ({ product }: IProps) => {
     return p.basePrice.toLocaleString("vi-VN");
   };
 
+  const handleGetBasePrice = (p: IProductResponse) => {
+    switch (userRole) {
+      case EUserTypeCategory.USER:
+        return p.basePrice.toLocaleString("vi-VN");
+      case EUserTypeCategory.CTV1:
+        return p.units.find((unit: IUnit) => unit.unit === EUnit.CTV1)?.basePrice.toLocaleString("vi-VN");
+      case EUserTypeCategory.CTV2:
+      case EUserTypeCategory.CTV3:
+        return p.units.find((unit: IUnit) => unit.unit === EUnit.CTV2)?.basePrice.toLocaleString("vi-VN");
+      default:
+        return p.basePrice.toLocaleString("vi-VN");
+    }
+  }
+
+  console.log(handleGetBasePrice(product))
+
   return (
     <div
       className="ListProducts-products-item"
@@ -88,11 +107,11 @@ const ProductCard = ({ product }: IProps) => {
         </div>
 
         <div className="ListProducts-products-actions">
-          <div className="ListProducts-products-oldPrice">
-            {handleGetOldPrice(product)}đ
-          </div>
+          {userRole !== EUserTypeCategory.USER && userRole !== EUserTypeCategory.ADMIN && <div className="ListProducts-products-oldPrice">
+            {product.basePrice.toLocaleString("vi-VN")}đ
+          </div>}
           <div className="ListProducts-products-basePrice">
-            {product?.basePrice.toLocaleString("vi-VN")}đ
+            {handleGetBasePrice(product)}đ
           </div>
           <div className="ListProducts-products-rating">
             <Rating name="read-only" value={5} readOnly size="small" />

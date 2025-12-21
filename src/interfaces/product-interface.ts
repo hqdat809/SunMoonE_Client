@@ -46,6 +46,15 @@ export interface IProductResponse {
   modifiedDate: Date;
   createdDate: Date;
   unit: EUnit;
+  units: IUnit[];
+}
+
+export interface IUnit {
+  unit: EUnit;
+  basePrice: number;
+  id: number;
+  name: string;
+  fullName: string;
 }
 
 export enum EUnit {

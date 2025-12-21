@@ -18,6 +18,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import imageBanner1 from "../../../assets/images/banner1.jpg"
 import imageBanner2 from "../../../assets/images/banner2.jpg"
+import Product from "../product/Product";
 
 const incentives = [
   {
@@ -108,6 +109,7 @@ const Dashboard = () => {
           </div>
         ))}
       </div>
+      <Product/>
     </div>
   );
 };

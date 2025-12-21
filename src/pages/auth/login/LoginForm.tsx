@@ -1,5 +1,8 @@
 import { LoadingButton } from "@mui/lab";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { ErrorMessage, Field, Form, Formik } from "formik";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { TSignInRequest } from "../../../interfaces/user-interfaces";
@@ -14,6 +17,7 @@ interface ILoginFormProps {
 const LoginForm = ({ setHasAccount, setAccessToken }: ILoginFormProps) => {
   const navigate = useNavigate();
   const isSignIn = false;
+  const [showPassword, setShowPassword] = useState(false);
 
   const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -71,9 +75,9 @@ const LoginForm = ({ setHasAccount, setAccessToken }: ILoginFormProps) => {
               />
             </div>
 
-            <div className="form-outline mb-3">
+            <div className="form-outline mb-3 password-field-wrapper">
               <Field
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 id="form3Example4"
                 className={`form-control form-control-lg  ${formikProps.errors.password &&
@@ -82,6 +86,18 @@ const LoginForm = ({ setHasAccount, setAccessToken }: ILoginFormProps) => {
                   }`}
                 placeholder="Enter password"
               />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <VisibilityOffIcon />
+                ) : (
+                  <VisibilityIcon />
+                )}
+              </button>
               <ErrorMessage
                 name="password"
                 component="div"

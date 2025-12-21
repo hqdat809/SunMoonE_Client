@@ -21,11 +21,24 @@
     margin-right: 30px;
   }
 
-  &__left,
   &__right {
     display: flex;
     align-items: center;
   }
+
+  &__left {
+    display: flex;
+    flex: 1;
+  }
+
+  &__routes {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+
 
   &__profile {
     display: flex;

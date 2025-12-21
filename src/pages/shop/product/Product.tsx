@@ -22,7 +22,7 @@ const priceSelections = [
 
 const Product = () => {
 
-  const userDetails = JSON.parse(localStorage.getItem("userDetails") || "{}");
+
 
   const initFilterProduct = {
     pageSize: 60,
@@ -86,22 +86,8 @@ const Product = () => {
       .then((response) => {
         if (response) {
           setTotal(response.total);
-
-          switch (userDetails.authorities[0].authority) {
-            case EUserTypeCategory.ADMIN:
-            case EUserTypeCategory.USER:
-              setProducts(response?.data.filter((p: IProductResponse) => p.unit === EUnit.USER));
-              break;
-            case EUserTypeCategory.CTV1:
-              setProducts(response?.data.filter((p: IProductResponse) => p.unit === EUnit.CTV1));
-              break;
-            case EUserTypeCategory.CTV2:
-            case EUserTypeCategory.CTV3:
-              setProducts(response?.data.filter((p: IProductResponse) => p.unit === EUnit.CTV2));
-              break;
-            default:
-              setProducts(response?.data.filter((p: IProductResponse) => p.unit === EUnit.USER));
-          }
+          const result = response?.data.filter((p: IProductResponse) => p.unit === EUnit.USER);
+          setProducts(result)
         }
       })
       .finally(() => {

@@ -22,10 +22,7 @@ import { ChangePasswordDialog } from './ChangePasswordDialog';
 
 const listRouteNavbar = [
   { label: "Trang chủ", path: RoutePath.DASHBOARD },
-  { label: "Giới thiệu", path: "/gioi-thieu" },
   { label: "Sản phẩm", path: RoutePath.PRODUCTS },
-  { label: "Tin tức", path: "/tin-tuc" },
-  { label: "Liên hệ", path: "/lien-he" },
 ];
 
 const Navbar = () => {
