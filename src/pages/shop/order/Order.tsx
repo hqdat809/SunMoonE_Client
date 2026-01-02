@@ -253,7 +253,6 @@ const Order = () => {
     cart.forEach((item) => {
       totalPrice += handleGetBasePriceNumber(item.details) * item.count;
     });
-    totalPrice += 30000;
     return totalPrice.toLocaleString("vi-VN");
   }, [cart, userRole]);
 
@@ -907,10 +906,6 @@ const Order = () => {
             <div className="Order__bill-value">
               {handleGetTotalPriceNotShip()}đ
             </div>
-          </div>
-          <div className="Order__bill-item">
-            <div className="Order__bill-label">Phí vận chuyển: </div>
-            <div className="Order__bill-value">30.000đ</div>
           </div>
           <div className="Order__bill-item">
             <div className="Order__bill-label">Tổng thanh toán: </div>

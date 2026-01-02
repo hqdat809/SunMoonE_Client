@@ -77,7 +77,7 @@ const OrderListPage = () => {
                             />
                         </div>
                         <div className="OrderListPage__item-price" style={{ color: "#ff3f35", fontWeight: 'bold' }}>
-                            <span>{(order.total + 30000).toLocaleString('vi-VN')}</span>
+                            <span>{(order.total).toLocaleString('vi-VN')}</span>
                             <span>đ</span>
                         </div>
                     </div>
@@ -123,18 +123,6 @@ const OrderListPage = () => {
                         </div>
                         <div className="OrderListPage__details-products">
                             <span style={{ fontWeight: 'bold', textDecoration: 'underline' }}>
-                                Phí vận chuyển:
-                            </span>
-                            <div className="OrderListPage__details-product">
-                                <span style={{ flex: 9 }}>Phí ship</span>
-                                <span style={{ flex: 1 }}>x</span>
-                                <span style={{ flex: 1 }}>1</span>
-                                <span>=</span>
-                                <span style={{ color: "#ff3f35", fontWeight: 'bold', flex: 3, justifyContent: 'flex-end', display: 'flex' }}>{(30000).toLocaleString('vi-VN')}đ</span>
-                            </div>
-                        </div>
-                        <div className="OrderListPage__details-products">
-                            <span style={{ fontWeight: 'bold', textDecoration: 'underline' }}>
                                 Tổng cộng:
                             </span>
                             <div className="OrderListPage__details-product">
@@ -142,7 +130,7 @@ const OrderListPage = () => {
                                 <span style={{ flex: 1 }}></span>
                                 <span style={{ flex: 1 }}></span>
                                 <span>=</span>
-                                <span style={{ color: "#ff3f35", fontWeight: 'bold', flex: 3, justifyContent: 'flex-end', display: 'flex', fontSize: 26 }}>{(order.total + 30000).toLocaleString('vi-VN')}đ</span>
+                                <span style={{ color: "#ff3f35", fontWeight: 'bold', flex: 3, justifyContent: 'flex-end', display: 'flex', fontSize: 26 }}>{(order.total).toLocaleString('vi-VN')}đ</span>
                             </div>
                         </div>
                         {order.status === 1 && <div className="OrderListPage__details-actions" >
