@@ -48,6 +48,7 @@ import { IUserAddress } from "../../../interfaces/user-interfaces";
 import { updateCustomerAddress } from "../../../services/customer-service";
 import { EUnit, IUnit } from "../../../interfaces/product-interface";
 import { EUserTypeCategory } from "../../../interfaces/user-interfaces";
+import { formatWardName } from "../../../utils/string-utils";
 
 const filterOptions = createFilterOptions({
   matchFrom: "start",
@@ -118,10 +119,13 @@ const Order = () => {
         );
 
         const ward = wardData.filter(
-          (w: any) => w?.name === addRecipient.wardName
+          (w: any) => formatWardName(w?.name) === formatWardName(addRecipient.wardName)
         );
-
-        setSelectedWard(ward[0]);
+        if(ward.length > 0) {
+          setSelectedWard(ward[0]);
+        } else {
+          setSelectedWard(null);
+        }
       }
     } catch (error) {
       console.error(error);
@@ -136,7 +140,7 @@ const Order = () => {
 
   const handleSubmitUserInfo = async (values: any) => {
     try {
-      values.wardName = selectedWard?.name;
+      values.wardName = formatWardName(selectedWard?.name);
       const userDetails = JSON.parse(localStorage.getItem("userDetails") || "");
 
       const addRecipient = { ...values, selectedLocation };
@@ -274,9 +278,6 @@ const Order = () => {
     setNote(e.target.value);
   };
 
-  useEffect(() => {
-    console.log(selectedWard);
-  }, [selectedWard]);
 
   const handleChangePrice = (e: any, cartDetail: ICart) => {
     const newCarts = productInCart.map((c) => {
@@ -394,7 +395,6 @@ const Order = () => {
                 initialValues={formLocationValues}
                 validationSchema={validationSchema}
                 onSubmit={(values) => {
-                  handleSubmitUserInfo(values);
                 }}
               >
                 {({
@@ -406,7 +406,10 @@ const Order = () => {
                   handleSubmit,
                   setFieldValue,
                 }) => (
-                  <Form onSubmit={handleSubmit} className="Form">
+                  <Form onSubmit={async (e) => {
+                    e.preventDefault();
+                    await handleSubmitUserInfo(values);
+                  }} className="Form">
                     <div className="form-outline mb-4 Form__row">
                       <Field
                         type="text"
