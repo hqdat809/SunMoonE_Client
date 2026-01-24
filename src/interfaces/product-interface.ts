@@ -58,8 +58,10 @@ export interface IUnit {
 }
 
 export enum EUnit {
-  USER = "khách lẻ",
+  USER = "KL",
   CTV1 = "ctv1",
   CTV2 = "ctv2",
   CTV3 = "ctv3",
 }
+
+

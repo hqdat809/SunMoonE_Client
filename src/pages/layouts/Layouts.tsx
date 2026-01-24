@@ -86,11 +86,11 @@ const Layouts = ({ setAccessToken }: ILayoutsProps) => {
       case EUserTypeCategory.USER:
         return p.basePrice;
       case EUserTypeCategory.CTV1:
-        return p.units.find((unit: IUnit) => unit.unit === EUnit.CTV1)?.basePrice || p.basePrice;
+        return p.units.find((unit: IUnit) => unit?.unit?.includes(EUnit.CTV1))?.basePrice || p.basePrice;
       case EUserTypeCategory.CTV2:
-        return p.units.find((unit: IUnit) => unit.unit === EUnit.CTV2)?.basePrice || p.basePrice;
+        return p.units.find((unit: IUnit) => unit?.unit?.includes(EUnit.CTV2))?.basePrice || p.basePrice;
       case EUserTypeCategory.CTV3:
-        return p.units.find((unit: IUnit) => unit.unit === EUnit.CTV3)?.basePrice || p.basePrice;
+        return p.units.find((unit: IUnit) => unit?.unit?.includes(EUnit.CTV3))?.basePrice || p.basePrice;
       default:
         return p.basePrice;
     }

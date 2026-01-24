@@ -86,7 +86,7 @@ const Product = () => {
       .then((response) => {
         if (response) {
           setTotal(response.total);
-          const result = response?.data.filter((p: IProductResponse) => p.unit === EUnit.USER);
+          const result = response?.data.filter((p: IProductResponse) => p?.unit?.includes(EUnit.USER));
           setProducts(result)
         }
       })
