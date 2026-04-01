@@ -48,6 +48,7 @@ import { IUserAddress } from "../../../interfaces/user-interfaces";
 import { updateCustomerAddress } from "../../../services/customer-service";
 import { EUnit, IUnit } from "../../../interfaces/product-interface";
 import { EUserTypeCategory } from "../../../interfaces/user-interfaces";
+import { getPriceByRole } from "../../../utils/price-utils";
 import { formatWardName } from "../../../utils/string-utils";
 
 const filterOptions = createFilterOptions({
@@ -174,18 +175,7 @@ const Order = () => {
   }, [cart]);
 
   const handleGetBasePriceNumber = (p: any): number => {
-    switch (userRole) {
-      case EUserTypeCategory.USER:
-        return p.basePrice;
-      case EUserTypeCategory.CTV1:
-        return p.units?.find((unit: IUnit) => unit?.unit?.includes(EUnit.CTV1))?.basePrice || p.basePrice;
-      case EUserTypeCategory.CTV2:
-        return p.units?.find((unit: IUnit) => unit?.unit?.includes(EUnit.CTV2))?.basePrice || p.basePrice;
-      case EUserTypeCategory.CTV3:
-        return p.units?.find((unit: IUnit) => unit?.unit?.includes(EUnit.CTV3))?.basePrice || p.basePrice;
-      default:
-        return p.basePrice;
-    }
+    return getPriceByRole(p, userRole);
   };
 
   const handleGetTotalPriceCollector = useCallback(() => {

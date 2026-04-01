@@ -42,6 +42,7 @@ const Product = () => {
   );
   const [filter, setFilter] = useState<IProductRequest>({
     ...initFilterProduct,
+    pageSize: 500,
     categoryId: categoryId || initFilterProduct.categoryId,
   });
 
@@ -86,8 +87,7 @@ const Product = () => {
       .then((response) => {
         if (response) {
           setTotal(response.total);
-          const result = response?.data.filter((p: IProductResponse) => p?.unit?.includes(EUnit.USER));
-          setProducts(result)
+          setProducts(response?.data || [])
         }
       })
       .finally(() => {

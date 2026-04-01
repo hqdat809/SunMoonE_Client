@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, Rating } from "@mui/material";
 import { CartContext } from "../../../layouts/Layouts";
 import { EUserTypeCategory } from "../../../../interfaces/user-interfaces";
+import { getPriceByRole } from "../../../../utils/price-utils";
 
 interface IProps {
   categoryId: number;
@@ -60,18 +61,7 @@ const ListProduct = ({ categoryId, categoryName }: IProps) => {
   }
 
   const handleGetBasePrice = (p: IProductResponse) => {
-    switch (userRole) {
-      case EUserTypeCategory.USER:
-        return p.basePrice.toLocaleString("vi-VN");
-      case EUserTypeCategory.CTV1:
-        return p.units.find((unit: IUnit) => unit?.unit?.includes(EUnit.CTV1))?.basePrice.toLocaleString("vi-VN");
-      case EUserTypeCategory.CTV2:
-        return p.units.find((unit: IUnit) => unit?.unit?.includes(EUnit.CTV2))?.basePrice.toLocaleString("vi-VN");
-      case EUserTypeCategory.CTV3:
-        return p.units.find((unit: IUnit) => unit?.unit?.includes(EUnit.CTV3))?.basePrice.toLocaleString("vi-VN");
-      default:
-        return p.basePrice.toLocaleString("vi-VN");
-    }
+    return getPriceByRole(p, userRole).toLocaleString("vi-VN");
   }
 
   useEffect(() => {

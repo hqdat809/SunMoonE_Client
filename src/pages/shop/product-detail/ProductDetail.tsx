@@ -7,6 +7,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { EUnit, IProductResponse, IUnit } from "../../../interfaces/product-interface";
 import noImageProduct from "../../../assets/images/no-product-image.png";
+import { getPriceByRole } from "../../../utils/price-utils";
 import { Button, TextField } from "@mui/material";
 import AddShoppingCartTwoToneIcon from "@mui/icons-material/AddShoppingCartTwoTone";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -101,18 +102,7 @@ const ProductDetail = () => {
   };
 
   const handleGetBasePrice = (p: IProductResponse) => {
-    switch (userRole) {
-      case EUserTypeCategory.USER:
-        return p.basePrice.toLocaleString("vi-VN");
-      case EUserTypeCategory.CTV1:
-        return p.units.find((unit: IUnit) => unit?.unit?.includes(EUnit.CTV1))?.basePrice.toLocaleString("vi-VN");
-      case EUserTypeCategory.CTV2:
-        return p.units.find((unit: IUnit) => unit?.unit?.includes(EUnit.CTV2))?.basePrice.toLocaleString("vi-VN");
-      case EUserTypeCategory.CTV3:
-        return p.units.find((unit: IUnit) => unit?.unit?.includes(EUnit.CTV3))?.basePrice.toLocaleString("vi-VN");
-      default:
-        return p.basePrice.toLocaleString("vi-VN");
-    }
+    return getPriceByRole(p, userRole).toLocaleString("vi-VN");
   };
 
   useEffect(() => {

@@ -47,6 +47,7 @@ export interface IProductResponse {
   createdDate: Date;
   unit: EUnit;
   units: IUnit[];
+  priceBooks?: IPricebook[];
 }
 
 export interface IUnit {
@@ -55,6 +56,16 @@ export interface IUnit {
   id: number;
   name: string;
   fullName: string;
+}
+
+export interface IPricebook {
+  productId: number;
+  priceBookId: number;
+  priceBookName: string;
+  price: number;
+  isActive: boolean;
+  startDate: string;
+  endDate: string;
 }
 
 export enum EUnit {

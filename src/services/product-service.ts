@@ -15,7 +15,9 @@ export const getProducts = async (
     //   payload.branchIds = [import.meta.env.VITE_BRANCH_ID]
     // }
 
-    const params = new URLSearchParams(payload as Record<string, string>);
+    console.log('payload: ', payload);
+
+    const params = new URLSearchParams({ ...payload, includePricebook: "true" } as unknown as Record<string, string>);
     const response: AxiosResponse<IKiotResponse<IProductResponse[]>> =
       await axios.get(`/kiot/products?${params}`, {
         headers: {
@@ -30,6 +32,8 @@ export const getProducts = async (
       cb?.();
     }
 
+    console.log('data: ', response.data);
+
     return response.data;
   } catch (error) {
     console.error("Error:", error);
@@ -39,7 +43,7 @@ export const getProducts = async (
 export const getProductDetails = async (payload: number, cb?: () => void) => {
   try {
     const response: AxiosResponse<IProductResponse> = await axios.get(
-      `/kiot/products/${payload}`,
+      `/kiot/products/${payload}?includePricebook=true`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem(

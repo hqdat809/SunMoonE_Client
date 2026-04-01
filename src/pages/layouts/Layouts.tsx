@@ -16,6 +16,7 @@ import Navbar from "../../components/navbar/Navbar";
 import { EUnit, IProductResponse, IUnit } from "../../interfaces/product-interface";
 import * as RoutePath from "../../routes/paths";
 import { getStorageToken } from "../../utils/storage-utils";
+import { getPriceByRole } from "../../utils/price-utils";
 import { EUserTypeCategory } from "../../interfaces/user-interfaces";
 import "./Layouts.scss";
 
@@ -82,18 +83,7 @@ const Layouts = ({ setAccessToken }: ILayoutsProps) => {
   };
 
   const handleGetBasePriceNumber = (p: IProductResponse): number => {
-    switch (userRole) {
-      case EUserTypeCategory.USER:
-        return p.basePrice;
-      case EUserTypeCategory.CTV1:
-        return p.units.find((unit: IUnit) => unit?.unit?.includes(EUnit.CTV1))?.basePrice || p.basePrice;
-      case EUserTypeCategory.CTV2:
-        return p.units.find((unit: IUnit) => unit?.unit?.includes(EUnit.CTV2))?.basePrice || p.basePrice;
-      case EUserTypeCategory.CTV3:
-        return p.units.find((unit: IUnit) => unit?.unit?.includes(EUnit.CTV3))?.basePrice || p.basePrice;
-      default:
-        return p.basePrice;
-    }
+    return getPriceByRole(p, userRole);
   };
 
   const handleGetTotalPriceInCart = useCallback(() => {
