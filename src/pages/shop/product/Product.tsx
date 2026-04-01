@@ -8,6 +8,7 @@ import {
 } from "../../../interfaces/product-interface";
 import { getDetailCollection } from "../../../services/collection-service";
 import { getProducts } from "../../../services/product-service";
+import { safeJSONParse } from "../../../utils/storage-utils";
 import ProductCard from "../dashboard/product-card/ProductCard";
 import "./Product.scss";
 import { useLocation, useParams } from "react-router-dom";
@@ -54,7 +55,7 @@ const Product = () => {
 
   const handleGetCollections = () => {
     getDetailCollection(
-      Number(JSON.parse(localStorage.getItem("CategoryParentId") || "")) ||
+      Number(safeJSONParse(localStorage.getItem("CategoryParentId"))) ||
       import.meta.env.VITE_COLLECTION_USER_ID
     ).then((response) => {
       if (response) {
@@ -105,7 +106,7 @@ const Product = () => {
         ...filter,
         categoryId:
           Number(
-            JSON.parse(localStorage.getItem("CategoryParentId") || "")
+            safeJSONParse(localStorage.getItem("CategoryParentId"))
           ) || import.meta.env.VITE_COLLECTION_USER_ID,
         currentItem: 0,
       })
@@ -134,7 +135,7 @@ const Product = () => {
         <div
           className={`Product__collections-item ${filter.categoryId ===
             Number(
-              JSON.parse(localStorage.getItem("CategoryParentId") || "")
+              safeJSONParse(localStorage.getItem("CategoryParentId"))
             ) || import.meta.env.VITE_COLLECTION_USER_ID
             ? "active"
             : ""
@@ -144,7 +145,7 @@ const Product = () => {
               ...filter,
               categoryId:
                 Number(
-                  JSON.parse(localStorage.getItem("CategoryParentId") || "")
+                  safeJSONParse(localStorage.getItem("CategoryParentId"))
                 ) || import.meta.env.VITE_COLLECTION_USER_ID,
               currentItem: 0,
             })
@@ -235,7 +236,7 @@ const Product = () => {
             </TextField>
           </div>
           <div className={`Product__filter-category ${filter.categoryId !== Number(
-            JSON.parse(localStorage.getItem("CategoryParentId") || "")
+            safeJSONParse(localStorage.getItem("CategoryParentId"))
           ) ? "active" : ""
             }`} style={{ display: 'none' }}>
             <TextField
@@ -247,7 +248,7 @@ const Product = () => {
               disabled={loading}
               value={
                 filter.categoryId === Number(
-                  JSON.parse(localStorage.getItem("CategoryParentId") || "")
+                  safeJSONParse(localStorage.getItem("CategoryParentId"))
                 ) ? "default" : filter.categoryId
               }
               helperText=""

@@ -7,3 +7,12 @@ export const saveStorageToken = (accessToken: string) => {
 export const getStorageToken = () => {
   return localStorage.getItem(EAuthToken.ACCESS_TOKEN);
 };
+
+export const safeJSONParse = <T,>(val: string | null, fallback: T | null = null): T | null => {
+  if (!val || val === "undefined") return fallback;
+  try {
+    return JSON.parse(val);
+  } catch {
+    return fallback;
+  }
+};

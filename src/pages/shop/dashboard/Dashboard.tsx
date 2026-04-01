@@ -12,6 +12,7 @@ import {
 } from "../../../services/collection-service";
 import { createCustomer } from "../../../services/customer-service";
 import { toastError } from "../../../utils/notifications-utils";
+import { safeJSONParse } from "../../../utils/storage-utils";
 import "./Dashboard.scss";
 import ListProduct from "./list-product/ListProduct";
 import "slick-carousel/slick/slick.css";
@@ -35,7 +36,7 @@ const Dashboard = () => {
         const createdCustomerResponse = await createCustomer()
       }
       getDetailCollection(
-        Number(JSON.parse(localStorage.getItem("CategoryParentId") || "")) ||
+        Number(safeJSONParse(localStorage.getItem("CategoryParentId"))) ||
         import.meta.env.VITE_COLLECTION_USER_ID
       ).then((response) => {
         if (response) {

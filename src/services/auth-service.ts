@@ -62,7 +62,7 @@ export const signIn = async (payload: TSignInRequest, cb?: () => void) => {
         case EUserTypeCategory.CTV3: {
           localStorage.setItem(
             "CategoryParentId",
-            JSON.stringify(import.meta.env.VITE_COLLECTION_CTV3_ID)
+            JSON.stringify(import.meta.env.VITE_COLLECTION_CTV3_ID || import.meta.env.VITE_COLLECTION_USER_ID)
           );
           break;
         }
