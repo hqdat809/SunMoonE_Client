@@ -82,6 +82,8 @@ const Product = () => {
     debouncedFetch(e.target.value);
   }
 
+
+
   const handleGetProduct = () => {
     getProducts(filter)
       .then((response) => {
